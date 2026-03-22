@@ -1,0 +1,336 @@
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import trainBg from "../assets/train-bg.jpg";
+
+function Home() {
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [loggedUser, setLoggedUser] = useState(null);
+  const navigate = useNavigate();
+
+  // ✅ Load logged user
+  useEffect(() => {
+    const user = localStorage.getItem("loggedUser");
+    if (user) {
+      setLoggedUser(user);
+    }
+  }, []);
+
+  // ✅ Logout
+  const handleLogout = () => {
+    localStorage.removeItem("loggedUser");
+    setLoggedUser(null);
+    navigate("/");
+  };
+
+  return (
+    <div style={styles.page}>
+
+      {/* ================= HEADER ================= */}
+      <header style={styles.header}>
+        <div style={styles.hamburger} onClick={() => setMenuOpen(!menuOpen)}>
+          ☰
+        </div>
+
+        <div style={styles.logo}>
+          🚆 Railway Reservation
+        </div>
+
+        {/* ✅ LOGIN / USER DISPLAY */}
+        <div>
+          {loggedUser ? (
+            <>
+              <span style={styles.userText}>
+                Welcome, {loggedUser}
+              </span>
+
+              <button
+                style={styles.adminBtn}
+                onClick={handleLogout}
+              >
+                Logout
+              </button>
+            </>
+          ) : (
+            <>
+              <button
+                style={styles.loginBtn}
+                onClick={() => navigate("/login")}
+              >
+                Login
+              </button>
+
+              <button
+                style={styles.registerBtn}
+                onClick={() => navigate("/register")}
+              >
+                Register
+              </button>
+
+              <button
+  style={styles.adminBtn}
+  onClick={() => navigate("/admin")}
+>
+  Admin
+</button>
+            </>
+          )}
+        </div>
+      </header>
+
+      {menuOpen && (
+        <div style={styles.dropdown}>
+        <MenuItem
+  icon="🎫"
+  text="Book Ticket"
+  onClick={() => {
+    if (loggedUser) {
+      navigate("/booking");
+    } else {
+      alert("Please login to book tickets");
+      navigate("/login");
+    }
+  }}
+/>
+          <MenuItem icon="📄" text="PNR Status" />
+          <MenuItem icon="🚆" text="Train Schedule" />
+          <MenuItem
+  icon="🧾"
+  text="Services"
+  onClick={() => navigate("/services")}
+/>
+
+<MenuItem
+  icon="📞"
+  text="Contact"
+  onClick={() => navigate("/contact")}
+/>
+        </div>
+      )}
+
+      {/* ================= HERO ================= */}
+      <section
+        style={{
+          ...styles.hero,
+          background: `
+            linear-gradient(rgba(10,42,102,0.7), rgba(10,42,102,0.7)),
+            url(${trainBg})
+          `,
+          backgroundSize: "cover",
+          backgroundPosition: "center"
+        }}
+      >
+        <h1>Smart & Secure Railway Reservation System</h1>
+        <p>Book tickets, track PNR and manage your journey seamlessly</p>
+
+        <div>
+         <button
+  style={styles.primaryBtn}
+  onClick={() => {
+    if (loggedUser) {
+      navigate("/booking");
+    } else {
+      alert("Please login to book tickets");
+      navigate("/login");
+    }
+  }}
+>
+  Book Ticket
+</button>
+
+         <button
+  style={styles.secondaryBtn}
+  onClick={() => navigate("/pnr")}
+>
+  Check PNR
+</button>
+        </div>
+      </section>
+
+      <div style={styles.searchBox}>
+       <input
+  className="home-search-input"
+  style={styles.input}
+  placeholder="From Station"
+/>
+
+<input
+  className="home-search-input"
+  style={styles.input}
+  placeholder="To Station"
+/>
+        <input style={styles.input} type="date" />
+
+        <select style={styles.input}>
+          <option>All Classes</option>
+          <option>Sleeper</option>
+          <option>3-AC</option>
+          <option>2-AC</option>
+          <option>1-AC</option>
+          <option>General</option>
+        </select>
+
+        <button
+          style={styles.primaryBtn}
+          onClick={() => navigate("/trainlist")}
+        >
+          Search Trains
+        </button>
+      </div>
+
+      <footer style={styles.footer}>
+        © 2026 Railway Reservation System. All Rights Reserved.
+      </footer>
+    </div>
+  );
+}
+
+function MenuItem({ icon, text, onClick }) {
+  return (
+    <div style={styles.menuItem} onClick={onClick}>
+      <span>{icon}</span>
+      <span>{text}</span>
+    </div>
+  );
+}
+
+const styles = {
+  page: {
+    fontFamily: "Poppins, Arial, sans-serif",
+    background: "#f4f6fb"
+  },
+
+ header: {
+  height: "65px",
+  background: "#0a2a66",
+  color: "white",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "space-between",
+  padding: "0 20px",
+  position: "sticky",
+  top: 0,
+  zIndex: 1000,
+  position: "relative"   // ✅ ADD THIS
+},
+
+  hamburger: {
+    fontSize: "26px",
+    cursor: "pointer"
+  },
+
+ logo: {
+  fontSize: "22px",
+  fontWeight: "600",
+  position: "absolute",   // ✅ ADD THIS
+  left: "50%",            // ✅ ADD THIS
+  transform: "translateX(-50%)"  // ✅ ADD THIS
+},
+  userText: {
+    marginRight: "10px",
+    fontWeight: "600"
+  },
+
+  dropdown: {
+    background: "white",
+    width: "240px",
+    boxShadow: "0 8px 20px rgba(0,0,0,0.15)",
+    position: "absolute",
+    top: "65px",
+    left: "0",
+    zIndex: 999
+  },
+
+  menuItem: {
+    padding: "14px 20px",
+    display: "flex",
+    gap: "12px",
+    cursor: "pointer",
+    borderBottom: "1px solid #eee",
+    fontWeight: "500"
+  },
+
+  hero: {
+    height: "70vh",
+    color: "white",
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+    textAlign: "center",
+    padding: "20px"
+  },
+
+  searchBox: {
+    background: "white",
+    width: "85%",
+    margin: "-50px auto 40px",
+    padding: "25px",
+    borderRadius: "14px",
+    boxShadow: "0 12px 30px rgba(0,0,0,0.15)",
+    display: "flex",
+    gap: "12px",
+    flexWrap: "wrap",
+    justifyContent: "center"
+  },
+
+  input: {
+    padding: "12px",
+    borderRadius: "6px",
+    border: "1px solid #ccc",
+    minWidth: "180px"
+  },
+
+  footer: {
+    background: "#0a2a66",
+    color: "white",
+    padding: "16px",
+    textAlign: "center"
+  },
+
+  primaryBtn: {
+    background: "#0a2a66",
+    color: "white",
+    padding: "12px 22px",
+    border: "none",
+    borderRadius: "6px",
+    cursor: "pointer"
+  },
+
+  secondaryBtn: {
+    background: "transparent",
+    color: "white",
+    border: "1px solid white",
+    padding: "12px 22px",
+    borderRadius: "6px",
+    marginLeft: "10px",
+    cursor: "pointer"
+  },
+
+  loginBtn: {
+    padding: "6px 14px",
+    border: "1px solid white",
+    background: "transparent",
+    color: "white",
+    marginRight: "10px",
+    cursor: "pointer"
+  },
+
+  registerBtn: {
+    padding: "6px 14px",
+    background: "white",
+    color: "#0a2a66",
+    border: "none",
+    marginRight: "10px",
+    cursor: "pointer"
+  },
+
+  adminBtn: {
+    padding: "6px 14px",
+    background: "#ffcc00",
+    color: "#0a2a66",
+    border: "none",
+    cursor: "pointer"
+  }
+};
+
+export default Home;

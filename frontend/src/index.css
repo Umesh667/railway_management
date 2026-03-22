@@ -1,0 +1,19 @@
+body {
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  background-color: #f4f6f8;
+}
+input::placeholder {
+  color: white;
+}
+div[style*="dashboardCard"]:hover {
+  transform: translateY(-5px);
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,0.08),
+    0 20px 60px rgba(0,0,0,0.6),
+    inset 0 0 40px rgba(255,255,255,0.08);
+}
+.home-search-input::placeholder {
+  color: black;
+  opacity: 1;
+}
