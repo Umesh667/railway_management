@@ -12,6 +12,7 @@ import AdminDashboard from "./AdminDashboard";
 import Services from "./pages/Services";
 import Contact from "./pages/Contact";
 import PNRStatus from "./pages/PNRStatus";
+import TrainSchedule from "./pages/TrainSchedule";
 function App() {
   return (
     <BrowserRouter>
@@ -29,6 +30,7 @@ function App() {
         <Route path="/services" element={<Services />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/pnr" element={<PNRStatus />} />
+        <Route path="/schedule" element={<TrainSchedule />} />
       </Routes>
     </BrowserRouter>
   );

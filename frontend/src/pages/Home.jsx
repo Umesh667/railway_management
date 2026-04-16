@@ -5,6 +5,7 @@ import trainBg from "../assets/train-bg.jpg";
 function Home() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [loggedUser, setLoggedUser] = useState(null);
+  const [darkText, setDarkText] = useState(false); // ✅ NEW STATE
   const navigate = useNavigate();
 
   // ✅ Load logged user
@@ -13,6 +14,18 @@ function Home() {
     if (user) {
       setLoggedUser(user);
     }
+  }, []);
+
+  // ✅ Background Animation
+  useEffect(() => {
+    const style = document.createElement("style");
+    style.innerHTML = `
+      @keyframes moveBg {
+        0% { background-position: center; }
+        100% { background-position: center 20px; }
+      }
+    `;
+    document.head.appendChild(style);
   }, []);
 
   // ✅ Logout
@@ -52,6 +65,14 @@ function Home() {
             </>
           ) : (
             <>
+              {/* 🌙 CLICKABLE MOON */}
+              <span
+                style={styles.moon}
+                onClick={() => setDarkText(!darkText)}
+              >
+                🌙
+              </span>
+
               <button
                 style={styles.loginBtn}
                 onClick={() => navigate("/login")}
@@ -67,11 +88,11 @@ function Home() {
               </button>
 
               <button
-  style={styles.adminBtn}
-  onClick={() => navigate("/admin")}
->
-  Admin
-</button>
+                style={styles.adminBtn}
+                onClick={() => navigate("/admin")}
+              >
+                Admin
+              </button>
             </>
           )}
         </div>
@@ -79,31 +100,37 @@ function Home() {
 
       {menuOpen && (
         <div style={styles.dropdown}>
-        <MenuItem
-  icon="🎫"
-  text="Book Ticket"
-  onClick={() => {
-    if (loggedUser) {
-      navigate("/booking");
-    } else {
-      alert("Please login to book tickets");
-      navigate("/login");
-    }
-  }}
-/>
-          <MenuItem icon="📄" text="PNR Status" />
-          <MenuItem icon="🚆" text="Train Schedule" />
           <MenuItem
-  icon="🧾"
-  text="Services"
-  onClick={() => navigate("/services")}
+            icon="🎫"
+            text="Book Ticket"
+            onClick={() => {
+              if (loggedUser) {
+                navigate("/booking");
+              } else {
+                alert("Please login to book tickets");
+                navigate("/login");
+              }
+            }}
+          />
+          <MenuItem
+  icon="📄"
+  text="PNR Status"
+  onClick={() => navigate("/pnr")}
 />
-
 <MenuItem
-  icon="📞"
-  text="Contact"
-  onClick={() => navigate("/contact")}
-/>
+  icon="🚆"
+  text="Train Schedule"
+  onClick={() => navigate("/schedule")}
+/>          <MenuItem
+            icon="🧾"
+            text="Services"
+            onClick={() => navigate("/services")}
+          />
+          <MenuItem
+            icon="📞"
+            text="Contact"
+            onClick={() => navigate("/contact")}
+          />
         </div>
       )}
 
@@ -116,51 +143,60 @@ function Home() {
             url(${trainBg})
           `,
           backgroundSize: "cover",
-          backgroundPosition: "center"
+          backgroundPosition: "center",
+          animation: "moveBg 10s linear infinite alternate"
         }}
       >
-        <h1>Smart & Secure Railway Reservation System</h1>
-        <p>Book tickets, track PNR and manage your journey seamlessly</p>
+        {/* ✅ TEXT COLOR TOGGLE */}
+        <h1 style={{ color: darkText ? "black" : "white" }}>
+          Smart & Secure Railway Reservation System
+        </h1>
+
+        <p style={{ color: darkText ? "black" : "white" }}>
+          Book tickets, track PNR and manage your journey seamlessly
+        </p>
 
         <div>
-         <button
-  style={styles.primaryBtn}
-  onClick={() => {
-    if (loggedUser) {
-      navigate("/booking");
-    } else {
-      alert("Please login to book tickets");
-      navigate("/login");
-    }
-  }}
->
-  Book Ticket
-</button>
+          <button
+            style={styles.primaryBtn}
+            onClick={() => {
+              if (loggedUser) {
+                navigate("/booking");
+              } else {
+                alert("Please login to book tickets");
+                navigate("/login");
+              }
+            }}
+          >
+            Book Ticket
+          </button>
 
-         <button
-  style={styles.secondaryBtn}
-  onClick={() => navigate("/pnr")}
->
-  Check PNR
-</button>
+          <button
+            style={styles.secondaryBtn}
+            onClick={() => navigate("/pnr")}
+          >
+            Check PNR
+          </button>
         </div>
       </section>
 
       <div style={styles.searchBox}>
-       <input
-  className="home-search-input"
-  style={styles.input}
-  placeholder="From Station"
-/>
+        <input
+          className="home-search-input"
+          style={styles.input}
+          placeholder="From Station"
+        />
 
-<input
-  className="home-search-input"
-  style={styles.input}
-  placeholder="To Station"
-/>
+        <input
+          className="home-search-input"
+          style={styles.input}
+          placeholder="To Station"
+        />
+
         <input style={styles.input} type="date" />
 
-        <select style={styles.input}>
+        {/* ✅ FIXED SELECT */}
+        <select style={styles.select}>
           <option>All Classes</option>
           <option>Sleeper</option>
           <option>3-AC</option>
@@ -199,32 +235,39 @@ const styles = {
     background: "#f4f6fb"
   },
 
- header: {
-  height: "65px",
-  background: "#0a2a66",
-  color: "white",
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "space-between",
-  padding: "0 20px",
-  position: "sticky",
-  top: 0,
-  zIndex: 1000,
-  position: "relative"   // ✅ ADD THIS
-},
+  header: {
+    height: "65px",
+    background: "#0a2a66",
+    color: "white",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+    padding: "0 20px",
+    position: "sticky",
+    top: 0,
+    zIndex: 1000,
+    position: "relative"
+  },
 
   hamburger: {
     fontSize: "26px",
     cursor: "pointer"
   },
 
- logo: {
-  fontSize: "22px",
-  fontWeight: "600",
-  position: "absolute",   // ✅ ADD THIS
-  left: "50%",            // ✅ ADD THIS
-  transform: "translateX(-50%)"  // ✅ ADD THIS
-},
+  logo: {
+    fontSize: "22px",
+    fontWeight: "600",
+    position: "absolute",
+    left: "50%",
+    transform: "translateX(-50%)"
+  },
+
+  moon: {
+    marginRight: "10px",
+    fontSize: "18px",
+    cursor: "pointer"
+  },
+
   userText: {
     marginRight: "10px",
     fontWeight: "600"
@@ -251,7 +294,6 @@ const styles = {
 
   hero: {
     height: "70vh",
-    color: "white",
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
@@ -278,6 +320,15 @@ const styles = {
     borderRadius: "6px",
     border: "1px solid #ccc",
     minWidth: "180px"
+  },
+
+  select: {
+    padding: "12px",
+    borderRadius: "6px",
+    border: "1px solid #ccc",
+    minWidth: "180px",
+    color: "black",
+    background: "white"
   },
 
   footer: {
@@ -310,7 +361,7 @@ const styles = {
     padding: "6px 14px",
     border: "1px solid white",
     background: "transparent",
-    color: "white",
+    color: "orange",
     marginRight: "10px",
     cursor: "pointer"
   },

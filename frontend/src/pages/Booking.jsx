@@ -97,9 +97,8 @@ function Booking() {
             <label>Date of Journey *</label>
             <input 
               type="date"
-              min={today}          // ✅ blocks past dates
-              readOnly={false}     // calendar still works
-              onKeyDown={(e) => e.preventDefault()} // ❌ blocks manual typing
+              min={today}
+              onKeyDown={(e) => e.preventDefault()}
               style={styles.input}
               name="date"
               value={form.date}
@@ -121,7 +120,6 @@ function Booking() {
               <option>1-AC</option>
               <option>GENERAL</option>
               <option>CHAIR CAR</option>
-              
             </select>
           </div>
         </div>
@@ -150,8 +148,8 @@ function Booking() {
               <div key={i} style={styles.row}>
                 <input
                   style={styles.smallInput}
-                  placeholder={`Passenger ${i + 1} Name`}
-                  value={p.name}
+                  placeholder="Enter Name"
+                  value={p.name || ""}
                   onChange={(e) =>
                     handlePassengerChange(i, "name", e.target.value)
                   }
@@ -160,8 +158,8 @@ function Booking() {
                 <input
                   style={styles.smallInput}
                   type="number"
-                  placeholder={`Passenger ${i + 1} Age`}
-                  value={p.age}
+                  placeholder="Enter Age"
+                  value={p.age || ""}
                   onChange={(e) =>
                     handlePassengerChange(i, "age", e.target.value)
                   }
@@ -171,23 +169,45 @@ function Booking() {
           </div>
         )}
 
-       <button 
-  style={styles.submitBtn}
-  onClick={() => {
-    localStorage.setItem("seatLimit", form.passengers); 
-    localStorage.setItem("from", form.from);
-localStorage.setItem("to", form.to);
-localStorage.setItem("date", form.date);
-localStorage.setItem("class", form.travelClass);
-localStorage.setItem("passengers", form.passengers);
- // ✅ STORE LIMIT
-    navigate("/trainlist");
-  }}
->
-  🔍 Search Trains
-</button>
+        <button 
+          style={styles.submitBtn}
+          onClick={() => {
+            
 
+            // ✅ NEW VALIDATIONS
+            if (!form.from || !form.to) {
+              alert("Please enter From and To stations");
+              return;
+            }
 
+            if (!form.date) {
+              alert("Please select journey date");
+              return;
+            }
+
+            if (
+              !passengerDetails.length ||
+              passengerDetails[0].name.trim() === "" ||
+              passengerDetails[0].age.toString().trim() === ""
+            ) {
+              alert("Please enter valid passenger name and age");
+              return;
+            }
+
+            localStorage.setItem("passengerName", passengerDetails[0].name);
+            localStorage.setItem("passengerAge", Number(passengerDetails[0].age));
+            localStorage.setItem("seatLimit", Number(form.passengers));
+            localStorage.setItem("from", form.from);
+            localStorage.setItem("to", form.to);
+            localStorage.setItem("date", form.date);
+            localStorage.setItem("class", form.travelClass);
+            localStorage.setItem("passengers", Number(form.passengers));
+
+            navigate("/trainlist");
+          }}
+        >
+          🔍 Search Trains
+        </button>
 
       </div>
     </div>
@@ -203,41 +223,50 @@ const styles = {
     background: `linear-gradient(rgba(10,42,102,0.7), rgba(10,42,102,0.7)), url(${trainBg})`,
     backgroundSize: "cover",
     backgroundPosition: "center",
-    position: "relative"
+    position: "relative",
+    fontFamily: "Segoe UI, sans-serif"
   },
 
   backBtn: {
     position: "absolute",
-    top: "15px",
-    right: "15px",
-    background: "#0a2a66",
+    top: "20px",
+    right: "20px",
+    background: "rgba(255,255,255,0.15)",
     color: "white",
-    border: "none",
-    padding: "10px 16px",
-    borderRadius: "10px",
+    border: "1px solid rgba(255,255,255,0.3)",
+    padding: "10px 18px",
+    borderRadius: "12px",
     cursor: "pointer",
-    fontWeight: "600"
+    fontWeight: "600",
+    backdropFilter: "blur(8px)",
+    transition: "0.3s"
   },
 
   card: {
-    background: "white",
-    padding: "30px",
-    borderRadius: "16px",
-    width: "800px",
+    background: "rgba(255, 255, 255, 0.15)",
+    backdropFilter: "blur(15px)",
+    padding: "35px",
+    borderRadius: "20px",
+    width: "820px",
     maxHeight: "85vh",
     overflowY: "auto",
-    boxShadow: "0 10px 30px rgba(0,0,0,0.2)"
+    boxShadow: "0 15px 40px rgba(0,0,0,0.3)",
+    border: "1px solid rgba(255,255,255,0.2)"
   },
 
   title: {
     textAlign: "center",
-    marginBottom: "5px"
+    marginBottom: "5px",
+    fontSize: "28px",
+    fontWeight: "700",
+    color: "#ffffff"
   },
 
   subtitle: {
     textAlign: "center",
-    color: "#666",
-    marginBottom: "20px"
+    color: "#e0e0e0",
+    marginBottom: "25px",
+    fontSize: "14px"
   },
 
   grid2: {
@@ -250,51 +279,62 @@ const styles = {
   field: {
     display: "flex",
     flexDirection: "column",
-    gap: "6px"
+    gap: "6px",
+    color: "#ffffff",
+    fontWeight: "500"
   },
 
   input: {
-    padding: "10px",
-    borderRadius: "8px",
-    border: "1px solid #ccc",
-    fontSize: "14px"
+    padding: "12px",
+    borderRadius: "10px",
+    border: "1px solid rgba(255,255,255,0.3)",
+    fontSize: "14px",
+    outline: "none",
+    background: "rgba(255,255,255,0.2)",
+    color: "#fff",
+    backdropFilter: "blur(5px)"
   },
 
   passengerBox: {
     marginTop: "20px",
-    padding: "15px",
-    border: "1px solid #ddd",
-    borderRadius: "10px"
+    padding: "18px",
+    border: "1px solid rgba(255,255,255,0.3)",
+    borderRadius: "12px",
+    background: "rgba(255,255,255,0.1)",
+    backdropFilter: "blur(8px)",
+    color: "#fff"
   },
 
   row: {
     display: "grid",
     gridTemplateColumns: "1fr 1fr",
     gap: "15px",
-    marginBottom: "10px"
+    marginBottom: "12px"
   },
 
   smallInput: {
-    padding: "8px",
-    borderRadius: "6px",
-    border: "1px solid #ccc"
+    padding: "10px",
+    borderRadius: "8px",
+    border: "1px solid rgba(255,255,255,0.3)",
+    background: "rgba(255,255,255,0.2)",
+    color: "#fff"
   },
 
   submitBtn: {
-    marginTop: "20px",
+    marginTop: "25px",
     width: "100%",
-    padding: "12px",
-    background: "#0a2a66",
+    padding: "14px",
+    background: "linear-gradient(135deg, #1e3c72, #2a5298)",
     color: "white",
     border: "none",
-    borderRadius: "8px",
+    borderRadius: "12px",
     cursor: "pointer",
     fontSize: "16px",
     fontWeight: "600"
   },
 
   error: {
-    color: "red",
+    color: "#ff6b6b",
     fontSize: "14px",
     marginTop: "5px"
   }

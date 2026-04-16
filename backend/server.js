@@ -4,6 +4,7 @@ const cors = require("cors");
 const userRoutes = require("./routes/userRoutes");
 const adminRoutes = require("./routes/adminRoutes");
 const trainRoutes = require("./routes/trainRoutes");
+const bookingRoutes = require("./routes/bookingRoutes");
 
 const app = express();
 
@@ -13,6 +14,7 @@ app.use(express.json());
 app.use("/api/users", userRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/trains", trainRoutes);
+app.use("/api/bookings", bookingRoutes);
 
 app.listen(5000, () => {
   console.log("Server running on http://localhost:5000");

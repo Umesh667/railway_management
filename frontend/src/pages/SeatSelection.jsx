@@ -103,7 +103,6 @@ if (b >= 29 && b <= 34) {
   for (let i = 1; i <= TOTAL_BOGIES; i++) {
     const type = getBogieType(i);
 
-    // ✅ FILTER BASED ON SELECTED CLASS
     if (type !== selectedClass) continue;
 
     buttons.push(
@@ -129,39 +128,105 @@ if (b >= 29 && b <= 34) {
 
   const type = getBogieType(activeBogie);
 
-  if (type === "GENERAL") {
-    return <p style={styles.noSeats}>❌ No seats in General</p>;
-  }
-
   let layout = [];
-
+ 
   for (let i = 0; i < SEATS_PER_BOGIE; i += 8) {
     layout.push(
       <div key={i} style={styles.compartment}>
-        
-        {/* 3x3 MAIN BLOCK */}
-        <div style={styles.matrix}>
-          {[0,1,2].map((row) => (
-            <div key={row} style={styles.row}>
-              {[0,1].map((col) => {
-                const seatNo = i + row + col * 3 + 1;
-                const seatKey = `B${activeBogie}-S${seatNo}`;
-                const labels = ["LB","MB","UB"];
-                return renderSeatBox(seatNo, seatKey, labels[row]);
-              })}
-            </div>
-          ))}
-        </div>
-
-        {/* SIDE SEATS */}
-        <div style={styles.sideSeats}>
-          {[6,7].map((offset, idx) => {
-            const seatNo = i + offset + 1;
+{/* -------- SLEEPER -------- */}
+{type === "SLEEPER" && (
+  <>
+    <div style={styles.matrix}>
+      {[0,1,2].map((row) => (
+        <div key={row} style={styles.row}>
+          {[0,1].map((col) => {
+            const seatNo = i + row + col * 3 + 1;
             const seatKey = `B${activeBogie}-S${seatNo}`;
-            return renderSeatBox(seatNo, seatKey, idx === 0 ? "SL" : "SU");
+            const labels = ["LB","MB","UB"];
+            return renderSeatBox(seatNo, seatKey, labels[row]);
           })}
         </div>
+      ))}
+    </div>
 
+    <div style={styles.sideSeats}>
+      {[6,7].map((offset, idx) => {
+        const seatNo = i + offset + 1;
+        const seatKey = `B${activeBogie}-S${seatNo}`;
+        return renderSeatBox(seatNo, seatKey, idx === 0 ? "SL" : "SU");
+      })}
+    </div>
+  </>
+)}
+        {/* -------- 3AC -------- */}
+        {type === "3-AC" && (
+          <>
+            <div style={styles.matrix}>
+              {[0,1,2].map((row) => (
+                <div key={row} style={styles.row}>
+                  {[0,1].map((col) => {
+                    const seatNo = i + row + col * 3 + 1;
+                    const seatKey = `B${activeBogie}-S${seatNo}`;
+                    const labels = ["LB","MB","UB"];
+                    return renderSeatBox(seatNo, seatKey, labels[row]);
+                  })}
+                </div>
+              ))}
+            </div>
+
+            <div style={styles.sideSeats}>
+              {[6,7].map((offset, idx) => {
+                const seatNo = i + offset + 1;
+                const seatKey = `B${activeBogie}-S${seatNo}`;
+                return renderSeatBox(seatNo, seatKey, idx === 0 ? "SL" : "SU");
+              })}
+            </div>
+          </>
+        )}
+
+        {/* -------- 2AC -------- */}
+        {type === "2-AC" && (
+          <>
+            <div style={styles.matrix}>
+              {[0,1].map((row) => (
+                <div key={row} style={styles.row}>
+                  {[0,1].map((col) => {
+                    const seatNo = i + row + col * 2 + 1;
+                    const seatKey = `B${activeBogie}-S${seatNo}`;
+                    const labels = ["LB","UB"];
+                    return renderSeatBox(seatNo, seatKey, labels[row]);
+                  })}
+                </div>
+              ))}
+            </div>
+
+            <div style={styles.sideSeats}>
+              {[4,5].map((offset, idx) => {
+                const seatNo = i + offset + 1;
+                const seatKey = `B${activeBogie}-S${seatNo}`;
+                return renderSeatBox(seatNo, seatKey, idx === 0 ? "SL" : "SU");
+              })}
+            </div>
+          </>
+        )}
+
+        {/* -------- 1AC -------- */}
+       {type === "1-AC" && (
+  <div style={{ width: "100%", display: "flex", justifyContent: "center" }}>
+    <div style={styles.matrix}>
+      {[0,1].map((row) => {
+        const seatNo = (i / 4) + row + 1;
+        const seatKey = `B${activeBogie}-S${seatNo}`;
+        const labels = ["LB","UB"];
+        return (
+          <div key={row} style={styles.row}>
+            {renderSeatBox(seatNo, seatKey, labels[row])}
+          </div>
+        );
+      })}
+    </div>
+  </div>
+)}
       </div>
     );
   }
@@ -199,7 +264,7 @@ color: isBooked || isSelected ? "white" : "#333",
       </button>
 
       <div style={styles.card}>
-        <h2 style={styles.title}>Select Bogie & Seats</h2>
+        <h2 style={styles.title}>Select Coach & Seats</h2>
 
         <p style={styles.limitText}>
           You can select maximum {seatLimit} seat(s)
@@ -212,7 +277,7 @@ color: isBooked || isSelected ? "white" : "#333",
         {activeBogie && (
           <>
             <h3 style={styles.sectionTitle}>
-              Seats in Bogi {activeBogie} — {getBogieType(activeBogie)}
+              Seats in Coach {activeBogie} — {getBogieType(activeBogie)}
             </h3>
 
             <div style={styles.seatGrid}>
@@ -237,155 +302,151 @@ const styles = {
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
-    background: `linear-gradient(rgba(10,42,102,0.7), rgba(10,42,102,0.7)), url(${trainBg})`,
+    background: "linear-gradient(135deg, #0f2027, #203a43, #2c5364)",
     backgroundSize: "cover",
-    position: "relative"
+    position: "relative",
+    fontFamily: "Segoe UI, sans-serif"
   },
-  
-   compartment: {
-  display: "flex",
-  justifyContent: "space-between",
-  alignItems: "center",
-  marginBottom: "20px",
-  padding: "18px",
-  border: "2px solid #ddd",
-  borderRadius: "12px",
-  background: "linear-gradient(145deg, #ffffff, #f0f0f0)",
-  
-},
-
-matrix: {
-  display: "flex",
-  flexDirection: "column",
-  gap: "10px"
-},
-
-row: {
-  display: "flex",
-  gap: "10px"
-},
-sideSeats: {
-  display: "flex",
-  flexDirection: "column",
-  gap: "10px",
-  marginLeft: "20px"
-},
-
-  rowContainer: {
-  display: "flex",
-  justifyContent: "space-between",
-  marginBottom: "15px"
-},
-
-block: {
-  display: "flex",
-  flexDirection: "column",
-  gap: "8px"
-},
-
-sideBlock: {
-  display: "flex",
-  flexDirection: "column",
-  gap: "8px",
-  marginLeft: "20px"
-},
-
-seatBox: {
-  width: "30px",
-  height: "30px",
-border: "1px solid rgba(0,0,0,0.08)",  display: "flex",
-  flexDirection: "column",
-  alignItems: "center",
-  justifyContent: "center",
-  fontWeight: "600",
-  transition: "all 0.2s ease",
-  boxShadow: "0 2px 6px rgba(0,0,0,0.2)"
-},
 
   backBtn: {
     position: "absolute",
-    top: "15px",
-    left: "15px",
-    background: "#0a2a66",
+    top: "20px",
+    left: "20px",
+    background: "rgba(255,255,255,0.15)",
     color: "white",
-    border: "none",
-    padding: "10px 14px",
-    borderRadius: "8px",
-    cursor: "pointer"
+    border: "1px solid rgba(255,255,255,0.3)",
+    padding: "10px 16px",
+    borderRadius: "10px",
+    cursor: "pointer",
+    backdropFilter: "blur(8px)",
+    transition: "0.3s"
   },
 
- card: {
-  background: "white",
-  padding: "25px",
-  borderRadius: "16px",
-  width: "1000px",
-  textAlign: "center",
-  boxShadow: "0 10px 30px rgba(0,0,0,0.2)",
-  marginTop: "30px"   // ✅ ADD THIS
-},
+  card: {
+    background: "rgba(255,255,255,0.15)",
+    backdropFilter: "blur(15px)",
+    padding: "30px",
+    borderRadius: "20px",
+    width: "1050px",
+    textAlign: "center",
+    boxShadow: "0 15px 40px rgba(0,0,0,0.3)",
+    marginTop: "30px",
+    border: "1px solid rgba(255,255,255,0.2)",
+    animation: "fadeIn 0.8s ease"
+  },
+
   title: {
-    marginBottom: "10px"
+    marginBottom: "10px",
+    color: "#fff",
+    fontSize: "26px",
+    fontWeight: "700"
   },
 
   limitText: {
-    color: "#0a2a66",
+    color: "#e0e0e0",
     fontWeight: "600",
-    marginBottom: "10px"
+    marginBottom: "15px"
   },
 
- bogieGrid: {
-  display: "grid",
-  gridTemplateColumns: "repeat(auto-fit, minmax(100px, 1fr))",
-  gap: "12px",
-  marginBottom: "15px",
-  width: "100%"
-},
+  bogieGrid: {
+    display: "grid",
+    gridTemplateColumns: "repeat(auto-fit, minmax(100px, 1fr))",
+    gap: "12px",
+    marginBottom: "20px"
+  },
 
   bogieBtn: {
-      width: "100%",
-    padding: "10px",
+    width: "100%",
+    padding: "12px",
     color: "white",
     border: "none",
-    borderRadius: "6px",
+    borderRadius: "10px",
     cursor: "pointer",
-    transition: "transform 0.2s ease, box-shadow 0.2s ease",
+    transition: "all 0.3s ease",
+    fontWeight: "600",
+    boxShadow: "0 5px 15px rgba(0,0,0,0.3)"
+  },
+
+  sectionTitle: {
+    color: "#fff",
+    margin: "15px 0",
     fontWeight: "600"
   },
 
- seatGrid: {
-  marginTop: "15px",
-  display: "grid",
-  gridTemplateColumns: "repeat(auto-fit, minmax(260px, 280px))",
-  justifyContent: "center",
-  gap: "20px"
-},
+  seatGrid: {
+    marginTop: "15px",
+    display: "grid",
+    gridTemplateColumns: "repeat(auto-fit, minmax(260px, 280px))",
+    justifyContent: "center",
+    gap: "25px"
+  },
 
-  seat: {
-    width: "45px",
-    height: "45px",
+  compartment: {
     display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    padding: "20px",
+    borderRadius: "16px",
+    background: "rgba(255,255,255,0.2)",
+    backdropFilter: "blur(10px)",
+    border: "1px solid rgba(255,255,255,0.3)",
+    boxShadow: "0 10px 25px rgba(0,0,0,0.2)",
+    transition: "0.3s",
+    animation: "fadeIn 0.6s ease"
+  },
+
+  matrix: {
+    display: "flex",
+    flexDirection: "column",
+    gap: "12px"
+  },
+
+  row: {
+    display: "flex",
+    gap: "12px"
+  },
+
+  sideSeats: {
+    display: "flex",
+    flexDirection: "column",
+    gap: "12px",
+    marginLeft: "20px"
+  },
+
+  seatBox: {
+    width: "38px",
+    height: "38px",
+    borderRadius: "8px",
+    border: "1px solid rgba(0,0,0,0.1)",
+    display: "flex",
+    flexDirection: "column",
     alignItems: "center",
     justifyContent: "center",
-    borderRadius: "8px",
-    fontWeight: "600"
+    fontWeight: "600",
+    transition: "all 0.25s ease",
+    boxShadow: "0 4px 10px rgba(0,0,0,0.2)",
+    cursor: "pointer"
   },
 
   noSeats: {
-    color: "red",
+    color: "#ff6b6b",
     fontWeight: "600",
     marginTop: "10px"
   },
 
   confirmBtn: {
-    marginTop: "15px",
-    padding: "10px",
+    marginTop: "20px",
+    padding: "14px",
     width: "100%",
-    background: "#0a2a66",
+    background: "linear-gradient(135deg, #1e3c72, #2a5298)",
     color: "white",
     border: "none",
-    borderRadius: "8px",
+    borderRadius: "12px",
     cursor: "pointer",
-    fontSize: "16px"
+    fontSize: "16px",
+    fontWeight: "600",
+    transition: "0.3s",
+    boxShadow: "0 8px 20px rgba(0,0,0,0.3)"
   }
 };
 

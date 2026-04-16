@@ -31,18 +31,34 @@ router.post("/add", (req, res) => {
     departure_time,
     arrival_time,
     duration,
-    total_seats
+    total_seats,
+    sleeper_price,
+  ac3_price,
+  ac2_price,
+  ac1_price,
+  general_price,
+  chair_price,
+  days
   } = req.body;
 
   const sql = `
-    INSERT INTO trains 
-    (name, number, \`from\`, \`to\`, departure_time, arrival_time, duration, total_seats)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+   INSERT INTO trains 
+    (name, number, \`from\`, \`to\`, departure_time, arrival_time, duration, total_seats,
+     sleeper_price, ac3_price, ac2_price, ac1_price, general_price, chair_price, days)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   `;
 
   db.query(
     sql,
-    [name, number, from, to, departure_time, arrival_time, duration, total_seats],
+    [name, number, from, to, departure_time, arrival_time, duration, Number(total_seats),
+
+  Number(sleeper_price),
+  Number(ac3_price),
+  Number(ac2_price),
+  Number(ac1_price),
+  Number(general_price),
+  Number(chair_price),
+  days],
     (err, result) => {
       if (err) {
         console.log(err);

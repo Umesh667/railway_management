@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import blueBg from "../assets/blue-bg.png";
 
@@ -14,11 +14,27 @@ function Login() {
   const [hasSubmitted, setHasSubmitted] = useState(false);
   const [successMsg, setSuccessMsg] = useState("");
 
-  // ✅ focus tracking
   const [focus, setFocus] = useState({
     username: false,
     password: false
   });
+
+  // ✅ Animations (NEW)
+  useEffect(() => {
+    const style = document.createElement("style");
+    style.innerHTML = `
+      @keyframes fadeIn {
+        from {opacity:0; transform:translateY(40px);}
+        to {opacity:1; transform:translateY(0);}
+      }
+
+      @keyframes moveBg {
+        0% { background-position: center; }
+        100% { background-position: center 30px; }
+      }
+    `;
+    document.head.appendChild(style);
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -33,7 +49,8 @@ function Login() {
     });
   };
 
-const validateAndSubmit = async () => {    setHasSubmitted(true);
+  const validateAndSubmit = async () => {
+    setHasSubmitted(true);
     let newErrors = {};
 
     if (!form.username) newErrors.username = "Username is required";
@@ -47,31 +64,28 @@ const validateAndSubmit = async () => {    setHasSubmitted(true);
     setErrors(newErrors);
 
     if (Object.keys(newErrors).length === 0) {
+      try {
+        const response = await fetch("http://localhost:5000/api/users/login", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(form)
+        });
 
-     try {
-  const response = await fetch("http://localhost:5000/api/users/login", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify(form)
-  });
+        const data = await response.json();
 
-  const data = await response.json();
-
-  if (response.ok) {
-    localStorage.setItem("loggedUser", data.user.username);
-
-    setSuccessMsg("✅ Logged in successfully!");
-    setTimeout(() => navigate("/"), 1200);
-  } else {
-    setErrors({ login: data.message });
-  }
-
-} catch (error) {
-  console.log(error);
-  setErrors({ login: "Server error" });
-}
+        if (response.ok) {
+          localStorage.setItem("loggedUser", data.user.username);
+          setSuccessMsg("✅ Logged in successfully!");
+          setTimeout(() => navigate("/"), 1200);
+        } else {
+          setErrors({ login: data.message });
+        }
+      } catch (error) {
+        console.log(error);
+        setErrors({ login: "Server error" });
+      }
     }
   };
 
@@ -172,8 +186,12 @@ const styles = {
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
-    backgroundImage: `url(${blueBg})`,
-    backgroundSize: "cover"
+    background: `
+      linear-gradient(rgba(10,42,102,0.7), rgba(10,42,102,0.7)),
+      url(${blueBg})
+    `,
+    backgroundSize: "cover",
+    animation: "moveBg 12s infinite alternate"
   },
 
   successBanner: {
@@ -196,15 +214,19 @@ const styles = {
     color: "white",
     border: "none",
     borderRadius: "12px",
-    cursor: "pointer"
+    cursor: "pointer",
+    transition: "0.3s"
   },
 
   card: {
-    background: "white",
+    background: "rgba(255,255,255,0.85)",
+    backdropFilter: "blur(12px)",
     padding: "30px",
     borderRadius: "16px",
     width: "360px",
-    textAlign: "center"
+    textAlign: "center",
+    animation: "fadeIn 0.8s ease",
+    boxShadow: "0 10px 30px rgba(0,0,0,0.3)"
   },
 
   title: { marginBottom: "6px" },
@@ -262,11 +284,13 @@ const styles = {
   submitBtn: {
     width: "100%",
     padding: "10px",
-    background: "black",
+    background: "linear-gradient(135deg,#0a2a66,#1e4db7)",
     color: "white",
     border: "none",
     borderRadius: "10px",
-    cursor: "pointer"
+    cursor: "pointer",
+    transition: "0.3s",
+    boxShadow: "0 5px 15px rgba(0,0,0,0.2)"
   },
 
   error: {

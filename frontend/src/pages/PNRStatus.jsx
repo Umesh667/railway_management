@@ -6,21 +6,29 @@ function PNRStatus() {
   const [pnr, setPnr] = useState("");
   const [result, setResult] = useState(null);
 
-  const checkPNR = () => {
-    if (pnr.length !== 10) {
-      alert("PNR must be 10 digits");
-      return;
-    }
+  const checkPNR = async () => {
+  if (pnr.length !== 10) {
+    alert("PNR must be 10 digits");
+    return;
+  }
 
-    // Dummy data (Later you connect backend here)
+  try {
+    const res = await fetch(`http://localhost:5000/api/bookings/pnr/${pnr}`);
+    const data = await res.json();
+
     setResult({
-      train: "Rajdhani Express",
-      from: "Delhi",
-      to: "Mumbai",
-      date: "10-03-2026",
+      train: data.train_name,
+      from: data.from_station,
+      to: data.to_station,
+      date: data.travel_date,
       status: "Confirmed"
     });
-  };
+
+  } catch (error) {
+    alert("PNR not found");
+    console.log(error);
+  }
+};
 
   return (
     <div style={styles.page}>
