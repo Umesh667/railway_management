@@ -143,7 +143,6 @@ function Booking() {
         {passengerDetails.length > 0 && (
           <div style={styles.passengerBox}>
             <h3>Passenger Details</h3>
-
             {passengerDetails.map((p, i) => (
               <div key={i} style={styles.row}>
                 <input

@@ -13,7 +13,7 @@ function PNRStatus() {
   }
 
   try {
-    const res = await fetch(`http://localhost:5000/api/bookings/pnr/${pnr}`);
+    const res = await fetch(`${import.meta.env.VITE_API_URL}/api/bookings/pnr/${pnr}`);
     const data = await res.json();
 
     setResult({

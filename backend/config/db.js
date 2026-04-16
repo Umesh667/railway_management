@@ -1,10 +1,11 @@
-const mysql = require("mysql");
+const mysql = require("mysql2");
 
 const db = mysql.createConnection({
-  host: "localhost",
+  host: "nozomi.proxy.rlwy.net",
   user: "root",
-  password: "umesh@676",
-  database: "railway_management"
+  password: "yDDrhWVlZEQCLJFUpqxPAiiaNTpChHVc",
+  database: "railway",
+  port: 33622
 });
 
 db.connect((err) => {

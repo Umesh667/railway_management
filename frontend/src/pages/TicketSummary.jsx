@@ -50,7 +50,7 @@ function TicketSummary() {
         const passengerName = localStorage.getItem("passengerName");
         const passengerAge = localStorage.getItem("passengerAge");
 
-        const res = await fetch("http://localhost:5000/api/bookings/add", {
+        const res = await fetch("${import.meta.env.VITE_API_URL}/api/bookings/add", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({

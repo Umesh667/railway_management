@@ -7,7 +7,7 @@ function TrainSchedule() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("http://localhost:5000/api/trains")
+    fetch("${import.meta.env.VITE_API_URL}/api/trains")
       .then(res => res.json())
       .then(data => {
         setTrains(data);
