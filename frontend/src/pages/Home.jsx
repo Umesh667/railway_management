@@ -138,10 +138,7 @@ function Home() {
       <section
         style={{
           ...styles.hero,
-          background: `
-            linear-gradient(rgba(10,42,102,0.7), rgba(10,42,102,0.7)),
-            url(${trainBg})
-          `,
+          background: `linear-gradient(rgba(10,42,102,0.7), rgba(10,42,102,0.7)), url(${trainBg})`,
           backgroundSize: "cover",
           backgroundPosition: "center",
           animation: "moveBg 10s linear infinite alternate"
@@ -245,8 +242,7 @@ const styles = {
     padding: "0 20px",
     position: "sticky",
     top: 0,
-    zIndex: 1000,
-    position: "relative"
+    zIndex: 1000
   },
 
   hamburger: {

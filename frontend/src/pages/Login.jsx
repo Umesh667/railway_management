@@ -65,7 +65,7 @@ function Login() {
 
     if (Object.keys(newErrors).length === 0) {
       try {
-        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/users/login", {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/users/login`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json"
@@ -181,18 +181,15 @@ function Login() {
 }
 
 const styles = {
-  page: {
-    height: "100vh",
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    background: `
-      linear-gradient(rgba(10,42,102,0.7), rgba(10,42,102,0.7)),
-      url(${blueBg})
-    `,
-    backgroundSize: "cover",
-    animation: "moveBg 12s infinite alternate"
-  },
+ page: {
+  height: "100vh",
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
+  background: `linear-gradient(rgba(10,42,102,0.7), rgba(10,42,102,0.7)), url(${blueBg})`,
+  backgroundSize: "cover",
+  animation: "moveBg 12s infinite alternate"
+},
 
   successBanner: {
     position: "absolute",
