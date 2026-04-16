@@ -24,7 +24,7 @@ const selectedDay = getDayFromDate(date);
       const to = localStorage.getItem("to");
 
       try {
-        const response = await fetch("${import.meta.env.VITE_API_URL}/api/trains");
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/trains`);
         const data = await response.json();
 
         const filtered = data.filter((train) => {

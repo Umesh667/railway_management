@@ -14,7 +14,7 @@ function AdminDashboard() {
 
 const fetchBookings = async () => {
   try {
-    const res = await fetch("${import.meta.env.VITE_API_URL}/api/bookings");
+    const res = await fetch(`${import.meta.env.VITE_API_URL}/api/bookings`);
     const data = await res.json();
     setBookings(data);
   } catch (err) {
@@ -64,7 +64,7 @@ const handleDayChange = (e) => {
 
 
     try {
-      const response = await fetch("${import.meta.env.VITE_API_URL}/api/trains/add", {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/trains/add`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -129,7 +129,7 @@ const handleDayChange = (e) => {
 
   const fetchTrains = async () => {
     try {
-      const response = await fetch("${import.meta.env.VITE_API_URL}/api/trains");
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/trains`);
 
       if (!response.ok) {
         console.log("Fetch failed");
