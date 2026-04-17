@@ -17,16 +17,59 @@ function PNRStatus() {
     const data = await res.json();
 
     setResult({
-      train: data.train_name,
-      from: data.from_station,
-      to: data.to_station,
-      date: data.travel_date,
-      status: "Confirmed"
-    });
+  train: data.train_name,
+  from: data.from_station,
+  to: data.to_station,
+  date: data.travel_date,
+  status: data.status   
+});
 
   } catch (error) {
     alert("PNR not found");
     console.log(error);
+  }
+};
+const handleCancel = async () => {
+  try {
+    const res = await fetch(`${import.meta.env.VITE_API_URL}/api/bookings/cancel/${pnr}`, {
+      method: "PUT"
+    });
+
+    const data = await res.json();
+
+    alert(data.message);
+
+    // 🔥 REMOVE SEATS FROM LOCAL STORAGE
+    let bookedSeats = JSON.parse(localStorage.getItem("bookedSeatsByBogie")) || {};
+
+    if (data.seats) {
+      const cancelledSeats = data.seats.split(",").map(s => s.trim());
+
+      cancelledSeats.forEach(seat => {
+        const bogie = seat.split("-")[0].replace("B", "");
+
+        if (bookedSeats[bogie]) {
+          bookedSeats[bogie] = bookedSeats[bogie].filter(s => s !== seat);
+
+          if (bookedSeats[bogie].length === 0) {
+            delete bookedSeats[bogie];
+          }
+        }
+      });
+
+      localStorage.setItem("bookedSeatsByBogie", JSON.stringify(bookedSeats));
+    }
+
+    alert("Seats released successfully ✅");
+
+    // 🔥 UPDATE STATUS IN UI
+    setResult((prev) => ({
+      ...prev,
+      status: "CANCELLED"
+    }));
+
+  } catch (err) {
+    console.log(err);
   }
 };
 
@@ -53,15 +96,22 @@ function PNRStatus() {
           Check Status
         </button>
 
-        {result && (
-          <div style={styles.result}>
-            <p><strong>Train:</strong> {result.train}</p>
-            <p><strong>From:</strong> {result.from}</p>
-            <p><strong>To:</strong> {result.to}</p>
-            <p><strong>Date:</strong> {result.date}</p>
-            <p><strong>Status:</strong> {result.status}</p>
-          </div>
-        )}
+       {result && (
+  <div style={styles.result}>
+    <p><strong>Train:</strong> {result.train}</p>
+    <p><strong>From:</strong> {result.from}</p>
+    <p><strong>To:</strong> {result.to}</p>
+    <p><strong>Date:</strong> {result.date}</p>
+    <p><strong>Status:</strong> {result.status}</p>
+
+    {/* ✅ ADD THIS BUTTON */}
+    {result.status !== "CANCELLED" && (
+      <button onClick={handleCancel} style={{ marginTop: "10px" }}>
+        ❌ Cancel Ticket
+      </button>
+    )}
+  </div>
+)}
       </div>
     </div>
   );
