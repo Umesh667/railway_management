@@ -30,6 +30,10 @@ function PNRStatus() {
   }
 };
 const handleCancel = async () => {
+   if (!window.confirm("Do you want to cancel this ticket?")) {
+    return;
+  }
+
   try {
     const res = await fetch(`${import.meta.env.VITE_API_URL}/api/bookings/cancel/${pnr}`, {
       method: "PUT"
