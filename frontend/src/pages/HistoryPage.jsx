@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-function History() {
+function HistoryPage() {
   const [bookings, setBookings] = useState([]);
  if (!localStorage.getItem("user")) {
     return <h2>Please login to view history</h2>;
@@ -42,4 +42,4 @@ function History() {
   );
 }
 
-export default History;
+export default HistoryPage;
