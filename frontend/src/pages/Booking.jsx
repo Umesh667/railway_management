@@ -143,7 +143,7 @@ const filteredTo = filterStations(form.to).slice(0, 5);
          <div style={styles.field}>
   <label>From Station *</label>
 
-  <div style={{ position: "relative" }}>
+  <div style={{ position: "relative" ,zIndex: 1000 }}>
     <input 
       style={styles.input}
       name="from"
@@ -310,8 +310,12 @@ const filteredTo = filterStations(form.to).slice(0, 5);
         <button 
           style={styles.submitBtn}
           onClick={() => {
-            
-
+              const user = JSON.parse(localStorage.getItem("user"));
+               if (!user) {
+    alert("Please login first");
+    navigate("/login");
+    return;
+  } 
             if (!form.from || !form.to) {
               alert("Please enter From and To stations");
               return;
@@ -339,7 +343,7 @@ const filteredTo = filterStations(form.to).slice(0, 5);
             localStorage.setItem("date", form.date);
             localStorage.setItem("class", form.travelClass);
             localStorage.setItem("passengers", Number(form.passengers));
-
+            localStorage.setItem("user_id", user.id); 
             navigate("/trainlist");
           }}
         >

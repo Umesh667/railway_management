@@ -39,34 +39,62 @@ function Payment() {
     );
   };
 
-  const handlePaymentSuccess = () => {
-    setLoading(true);
+  const handlePaymentSuccess = async () => {
+  setLoading(true);
+
+  try {
+    // 🔥 ADD THIS API CALL
+    const res = await fetch(`${import.meta.env.VITE_API_URL}/api/bookings/add`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        train_name: localStorage.getItem("trainName"),
+        from: localStorage.getItem("from"),
+        to: localStorage.getItem("to"),
+        date: localStorage.getItem("date"),
+        class: localStorage.getItem("class"),
+        passengers: localStorage.getItem("passengers"),
+        seats: JSON.parse(localStorage.getItem("lastSeats")).join(","),
+        passenger_name: localStorage.getItem("passengerName"),
+        passenger_age: localStorage.getItem("passengerAge"),
+        user_id: localStorage.getItem("user_id") // 🔥 MOST IMPORTANT
+      })
+    });
+
+    const data = await res.json();
+    console.log("Booking saved:", data);
+
+  } catch (err) {
+    console.log(err);
+  }
+
+  setTimeout(() => {
+    setLoading(false);
+    setPaid(true);
+
+    localStorage.setItem(
+      "lastPayment",
+      JSON.stringify({ amount, seats })
+    );
 
     setTimeout(() => {
-      setLoading(false);
-      setPaid(true);
-
-      localStorage.setItem(
-        "lastPayment",
-        JSON.stringify({ amount, seats })
-      );
-
-      setTimeout(() => {
-        navigate("/ticketsummary", {
-          state: {
-            from: localStorage.getItem("from"),
-            to: localStorage.getItem("to"),
-            date: localStorage.getItem("date"),
-            travelClass: localStorage.getItem("class"),
-            passengers: localStorage.getItem("passengers"),
-            seats: JSON.parse(localStorage.getItem("lastSeats")),
-            trainName: localStorage.getItem("trainName"),
-            amount: amount
-          }
-        });
-      }, 1500);
-    }, 2000);
-  };
+      navigate("/ticketsummary", {
+        state: {
+          from: localStorage.getItem("from"),
+          to: localStorage.getItem("to"),
+          date: localStorage.getItem("date"),
+          travelClass: localStorage.getItem("class"),
+          passengers: localStorage.getItem("passengers"),
+          seats: JSON.parse(localStorage.getItem("lastSeats")),
+          trainName: localStorage.getItem("trainName"),
+          amount: amount
+        }
+      });
+    }, 1500);
+  }, 2000);
+};
 
   return (
     <div style={styles.page}>

@@ -118,6 +118,18 @@ function Home() {
   onClick={() => navigate("/pnr")}
 />
 <MenuItem
+  icon="📜"
+  text="Booking History"
+  onClick={() => {
+    if (loggedUser) {
+      navigate("/history");
+    } else {
+      alert("Please login to view history");
+      navigate("/login");
+    }
+  }}
+/>
+<MenuItem
   icon="🚆"
   text="Train Schedule"
   onClick={() => navigate("/schedule")}
