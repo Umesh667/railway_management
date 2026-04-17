@@ -3,8 +3,6 @@ const db = require("../config/db");
 
 const router = express.Router();
 
-
-// ================= GET ALL TRAINS =================
 router.get("/", (req, res) => {
 
   const sql = "SELECT * FROM trains ORDER BY id DESC";
@@ -19,8 +17,6 @@ router.get("/", (req, res) => {
   });
 });
 
-
-// ================= ADD TRAIN =================
 router.post("/add", (req, res) => {
 
   const {
@@ -70,8 +66,6 @@ router.post("/add", (req, res) => {
   );
 });
 
-
-// ================= DELETE TRAIN =================
 router.delete("/:id", (req, res) => {
 
   const trainId = req.params.id;

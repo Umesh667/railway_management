@@ -4,7 +4,6 @@ const db = require("../config/db");
 const router = express.Router();
 
 
-// ================= ADD BOOKING =================
 router.post("/add", (req, res) => {
 
   console.log("Booking API HIT");
@@ -28,7 +27,6 @@ router.post("/add", (req, res) => {
 
   const pnr = generatePNR();
 
-  // ✅ GET ALL CLASS PRICES
   const getPriceSql = `
     SELECT sleeper_price, ac3_price, ac2_price, ac1_price, general_price, chair_price 
     FROM trains WHERE name = ?
@@ -47,7 +45,6 @@ router.post("/add", (req, res) => {
 
     let basePrice = 0;
 
-    // ✅ CLASS BASED PRICE
     if (travelClass === "SLEEPER") basePrice = result[0].sleeper_price;
     else if (travelClass === "3-AC") basePrice = result[0].ac3_price;
     else if (travelClass === "2-AC") basePrice = result[0].ac2_price;
@@ -55,17 +52,14 @@ router.post("/add", (req, res) => {
     else if (travelClass === "GENERAL") basePrice = result[0].general_price;
     else if (travelClass === "CHAIR CAR") basePrice = result[0].chair_price;
 
-    // ✅ APPLY DISCOUNT
     let finalAmount = basePrice;
 
     if (passenger_age >= 60) {
       finalAmount = basePrice * 0.6;
     }
 
-    // ✅ MULTIPLY BY PASSENGERS
     finalAmount = finalAmount * passengers;
 
-    // ================= INSERT =================
     const sql = `
       INSERT INTO bookings 
       (train_name, from_station, to_station, travel_date, \`class\`, passengers, seats, amount, passenger_name, passenger_age, pnr)
@@ -106,7 +100,6 @@ router.post("/add", (req, res) => {
 });
 
 
-// ================= GET ALL BOOKINGS =================
 router.get("/", (req, res) => {
 
   const sql = "SELECT * FROM bookings ORDER BY id DESC";
@@ -122,7 +115,6 @@ router.get("/", (req, res) => {
 });
 
 
-// ================= GET BOOKING BY PNR =================
 router.get("/pnr/:pnr", (req, res) => {
   const { pnr } = req.params;
 
@@ -141,5 +133,44 @@ router.get("/pnr/:pnr", (req, res) => {
     res.json(result[0]);
   });
 });
+// ❌ CANCEL TICKET API (FINAL VERSION)
+router.put("/cancel/:pnr", (req, res) => {
+  const { pnr } = req.params;
 
+  // Step 1: Get booking details
+  const getSql = "SELECT seats, status FROM bookings WHERE pnr = ?";
+
+  db.query(getSql, [pnr], (err, result) => {
+    if (err) {
+      console.log(err);
+      return res.status(500).json({ message: "Database error" });
+    }
+
+    if (result.length === 0) {
+      return res.status(404).json({ message: "PNR not found" });
+    }
+
+    // 🔥 NEW CHECK
+    if (result[0].status === "CANCELLED") {
+      return res.json({ message: "Ticket already cancelled" });
+    }
+
+    const seats = result[0].seats;
+
+    // Step 2: Update status
+    const updateSql = "UPDATE bookings SET status = 'CANCELLED' WHERE pnr = ?";
+
+    db.query(updateSql, [pnr], (err) => {
+      if (err) {
+        console.log(err);
+        return res.status(500).json({ message: "Database error" });
+      }
+
+      res.json({
+        message: "Ticket cancelled successfully",
+        seats
+      });
+    });
+  });
+});
 module.exports = router;

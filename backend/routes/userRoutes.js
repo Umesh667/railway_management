@@ -4,7 +4,6 @@ const db = require("../config/db");
 const router = express.Router();
 
 
-// ================= REGISTER =================
 router.post("/register", async (req, res) => {
 
   const {
@@ -21,13 +20,11 @@ router.post("/register", async (req, res) => {
     pincode
   } = req.body;
 
-  // Basic validation
   if (!first || !last || !age || !gender || !phone || !username || !password) {
     return res.status(400).json({ message: "Please fill all required fields" });
   }
 
   try {
-    // Check if username already exists
     const checkUserSql = "SELECT * FROM users WHERE username = ?";
     
     db.query(checkUserSql, [username], async (err, result) => {
@@ -72,7 +69,6 @@ router.post("/register", async (req, res) => {
 });
 
 
-// ================= LOGIN =================
 router.post("/login", (req, res) => {
 
   const { username, password } = req.body;

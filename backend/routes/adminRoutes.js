@@ -3,7 +3,6 @@ const db = require("../config/db");
 
 const router = express.Router();
 
-// ================= ADMIN LOGIN =================
 router.post("/login", (req, res) => {
 
   console.log("BODY RECEIVED:", req.body);
