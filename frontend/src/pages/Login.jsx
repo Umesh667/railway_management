@@ -19,7 +19,6 @@ function Login() {
     password: false
   });
 
-  // ✅ Animations (NEW)
   useEffect(() => {
     const style = document.createElement("style");
     style.innerHTML = `
@@ -27,7 +26,6 @@ function Login() {
         from {opacity:0; transform:translateY(40px);}
         to {opacity:1; transform:translateY(0);}
       }
-
       @keyframes moveBg {
         0% { background-position: center; }
         100% { background-position: center 30px; }
@@ -76,10 +74,16 @@ function Login() {
         const data = await response.json();
 
         if (response.ok) {
-localStorage.setItem("user", JSON.stringify({
-  id: data.user.id,
-  name: data.user.username
-}));          setSuccessMsg("✅ Logged in successfully!");
+          console.log("LOGIN DATA:", data);
+
+          localStorage.setItem("user", JSON.stringify({
+            id: data.user.id,
+            name: data.user.username
+          }));
+
+          console.log("Saved user:", localStorage.getItem("user"));
+
+          setSuccessMsg("✅ Logged in successfully!");
           setTimeout(() => navigate("/"), 1200);
         } else {
           setErrors({ login: data.message });
@@ -93,7 +97,6 @@ localStorage.setItem("user", JSON.stringify({
 
   return (
     <div style={styles.page}>
-
       {successMsg && (
         <div style={styles.successBanner}>{successMsg}</div>
       )}
@@ -103,80 +106,27 @@ localStorage.setItem("user", JSON.stringify({
       </button>
 
       <div style={styles.card}>
-        <h2 style={styles.title}>User Login</h2>
-        <p style={styles.subtitle}>Access your railway account</p>
+        <h2>User Login</h2>
 
-        {/* USERNAME */}
-        <div style={styles.field}>
-          <label style={styles.label}>Enter username</label>
+        <input
+          type="text"
+          name="username"
+          placeholder="Username"
+          value={form.username}
+          onChange={handleChange}
+        />
 
-          <div style={styles.inputWrapper}>
-            <span style={styles.icon}>👤</span>
+        <input
+          type="password"
+          name="password"
+          placeholder="Password"
+          value={form.password}
+          onChange={handleChange}
+        />
 
-            <input
-              type="text"
-              name="username"
-              value={form.username}
-              onChange={handleChange}
-              onFocus={() => setFocus({ ...focus, username: true })}
-              onBlur={() => setFocus({ ...focus, username: false })}
-              style={styles.input}
-            />
+        {errors.login && <p style={{ color: "red" }}>{errors.login}</p>}
 
-            <span
-              style={{
-                ...styles.focusLine,
-                transform:
-                  focus.username || form.username
-                    ? "scaleX(1)"
-                    : "scaleX(0)"
-              }}
-            />
-          </div>
-
-          {hasSubmitted && errors.username && (
-            <p style={styles.error}>{errors.username}</p>
-          )}
-        </div>
-
-        {/* PASSWORD */}
-        <div style={styles.field}>
-          <label style={styles.label}>Enter password</label>
-
-          <div style={styles.inputWrapper}>
-            <span style={styles.icon}>🔑</span>
-
-            <input
-              type="password"
-              name="password"
-              value={form.password}
-              onChange={handleChange}
-              onFocus={() => setFocus({ ...focus, password: true })}
-              onBlur={() => setFocus({ ...focus, password: false })}
-              style={styles.input}
-            />
-
-            <span
-              style={{
-                ...styles.focusLine,
-                transform:
-                  focus.password || form.password
-                    ? "scaleX(1)"
-                    : "scaleX(0)"
-              }}
-            />
-          </div>
-
-          {hasSubmitted && errors.password && (
-            <p style={styles.error}>{errors.password}</p>
-          )}
-        </div>
-
-        {errors.login && <p style={styles.error}>{errors.login}</p>}
-
-        <button style={styles.submitBtn} onClick={validateAndSubmit}>
-          Login
-        </button>
+        <button onClick={validateAndSubmit}>Login</button>
       </div>
     </div>
   );
