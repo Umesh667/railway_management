@@ -238,7 +238,7 @@ const filteredTo = filterStations(form.to).slice(0, 5);
           <div style={styles.field}>
             <label>Class *</label>
             <select 
-              style={styles.input}
+                style={{ ...styles.input, zIndex: 1 }}
               name="travelClass"
               value={form.travelClass}
               onChange={handleChange}
@@ -302,7 +302,6 @@ const filteredTo = filterStations(form.to).slice(0, 5);
           onClick={() => {
             
 
-            // ✅ NEW VALIDATIONS
             if (!form.from || !form.to) {
               alert("Please enter From and To stations");
               return;
@@ -363,7 +362,7 @@ dropdown: {
   borderRadius: "8px",
   maxHeight: "150px",
   overflowY: "auto",
-  zIndex: 10,
+  zIndex: 9999,
   color: "#000"
 },
 
@@ -437,7 +436,9 @@ dropdownItem: {
     outline: "none",
     background: "rgba(255,255,255,0.2)",
     color: "#fff",
-    backdropFilter: "blur(5px)"
+    backdropFilter: "blur(5px)",
+    position: "relative",
+  zIndex: 1
   },
 
   passengerBox: {
