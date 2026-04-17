@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import trainBg from "../assets/train-bg.jpg";
 
@@ -8,53 +8,90 @@ function Booking() {
   const today = new Date().toISOString().split("T")[0];
 
   const [form, setForm] = useState({
-    from: "",
-    to: "",
-    date: "",
-    travelClass: "Sleeper",
-    passengers: ""
-  });
+  from: localStorage.getItem("from") || "",
+  to: localStorage.getItem("to") || "",
+  date: localStorage.getItem("date") || "",
+  travelClass: localStorage.getItem("class") || "SLEEPER",
+  passengers: localStorage.getItem("passengers") || ""
+});
 
   const [error, setError] = useState("");
   const [passengerDetails, setPassengerDetails] = useState([]);
-
+useEffect(() => {
+  const name = localStorage.getItem("passengerName");
+  const age = localStorage.getItem("passengerAge");
+const count = Number(localStorage.getItem("passengers")) || 0;
+  if (name && age && count) {
+    const details = [];
+    for (let i = 0; i < count; i++) {
+      details.push({
+        name: i === 0 ? name : "",
+        age: i === 0 ? age : ""
+      });
+    }
+    setPassengerDetails(details);
+  }
+}, []);
   const handleChange = (e) => {
-    const { name, value } = e.target;
+  const { name, value } = e.target;
 
-    if (name === "passengers") {
-      const count = Number(value);
+  if (name === "passengers") {
+    const count = Number(value);
 
-      if (count < 1) {
-        setError("⚠️ At least 1 passenger is required");
-        setPassengerDetails([]);
-        setForm({ ...form, passengers: value });
-        return;
-      }
+    if (count < 1) {
+      setError("⚠️ At least 1 passenger is required");
+      setPassengerDetails([]);
 
-      if (count > 6) {
-        setError("⚠️ Maximum 6 passengers allowed per booking");
-        setPassengerDetails([]);
-        setForm({ ...form, passengers: value });
-        return;
-      }
+      setForm((prev) => {
+        const updated = { ...prev, passengers: value };
+        localStorage.setItem("passengers", value);
+        return updated;
+      });
 
-      setError("");
-
-      const details = [];
-      for (let i = 0; i < count; i++) {
-        details.push({ name: "", age: "" });
-      }
-      setPassengerDetails(details);
+      return;
     }
 
-    setForm({ ...form, [name]: value });
-  };
+    if (count > 6) {
+      setError("⚠️ Maximum 6 passengers allowed per booking");
+      setPassengerDetails([]);
+
+      setForm((prev) => {
+        const updated = { ...prev, passengers: value };
+        localStorage.setItem("passengers", value);
+        return updated;
+      });
+
+      return;
+    }
+
+    setError("");
+
+    const details = [];
+    for (let i = 0; i < count; i++) {
+      details.push({ name: "", age: "" });
+    }
+    setPassengerDetails(details);
+  }
+
+  setForm((prev) => {
+    const updated = { ...prev, [name]: value };
+
+    localStorage.setItem(name, value); // 🔥 main fix
+
+    return updated;
+  });
+};
 
   const handlePassengerChange = (index, field, value) => {
-    const updated = [...passengerDetails];
-    updated[index][field] = value;
-    setPassengerDetails(updated);
-  };
+  const updated = [...passengerDetails];
+  updated[index][field] = value;
+  setPassengerDetails(updated);
+
+  if (index === 0) {
+    if (field === "name") localStorage.setItem("passengerName", value);
+    if (field === "age") localStorage.setItem("passengerAge", value);
+  }
+};
 
   return (
     <div style={styles.page}>
