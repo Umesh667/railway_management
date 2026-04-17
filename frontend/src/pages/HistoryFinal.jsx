@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-function HistoryPage() {
+function HistoryFinal() {
   const [bookings, setBookings] = useState([]);
 
   useEffect(() => {
@@ -55,4 +55,4 @@ function HistoryPage() {
   );
 }
 
-export default HistoryPage;
+export default HistoryFinal;
