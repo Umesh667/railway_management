@@ -13,7 +13,7 @@ import Services from "./pages/Services";
 import Contact from "./pages/Contact";
 import PNRStatus from "./pages/PNRStatus";
 import TrainSchedule from "./pages/TrainSchedule";
-import History from "./pages/HistoryPage";
+import HistoryPage from "./pages/HistoryPage";
 
 function App() {
   return (
