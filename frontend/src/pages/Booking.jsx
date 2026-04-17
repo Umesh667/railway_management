@@ -188,7 +188,7 @@ const filteredTo = filterStations(form.to).slice(0, 5);
 <div style={styles.field}>
   <label>To Station *</label>
 
-  <div style={{ position: "relative" }}>
+  <div style={{ position: "relative", zIndex: 1000 }}>
     <input 
       style={styles.input}
       name="to"
@@ -238,7 +238,7 @@ const filteredTo = filterStations(form.to).slice(0, 5);
               type="date"
               min={today}
               onKeyDown={(e) => e.preventDefault()}
-              style={styles.input}
+                style={{ ...styles.input, zIndex: 0 }}
               name="date"
               value={form.date}
               onChange={handleChange}
@@ -372,7 +372,7 @@ dropdown: {
   borderRadius: "8px",
   maxHeight: "150px",
   overflowY: "auto",
-  zIndex: 9999,
+  zIndex: 99999,
   color: "#000"
 },
 
