@@ -162,11 +162,15 @@ const filteredTo = filterStations(form.to).slice(0, 5);
           <div
             key={i}
             style={styles.dropdownItem}
-            onClick={() => {
-              setForm({ ...form, from: station });
-              localStorage.setItem("from", station);
-              setShowFromDropdown(false);
-            }}
+            onMouseDown={() => {
+  setForm((prev) => {
+    const updated = { ...prev, from: station };
+    localStorage.setItem("from", station);
+    return updated;
+  });
+
+  setShowFromDropdown(false);
+}}
           >
             {station}
           </div>
@@ -195,18 +199,22 @@ const filteredTo = filterStations(form.to).slice(0, 5);
     {showToDropdown && filteredTo.length > 0 && (
       <div style={styles.dropdown}>
         {filteredTo.map((station, i) => (
-          <div
-            key={i}
-            style={styles.dropdownItem}
-            onClick={() => {
-              setForm({ ...form, to: station });
-              localStorage.setItem("to", station);
-              setShowToDropdown(false);
-            }}
-          >
-            {station}
-          </div>
-        ))}
+  <div
+    key={i}
+    style={styles.dropdownItem}
+    onMouseDown={() => {
+      setForm((prev) => {
+        const updated = { ...prev, to: station };
+        localStorage.setItem("to", station);
+        return updated;
+      });
+
+      setShowToDropdown(false);
+    }}
+  >
+    {station}
+  </div>
+))}
       </div>
     )}
   </div>
