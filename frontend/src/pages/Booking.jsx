@@ -394,6 +394,7 @@ dropdownItem: {
     width: "820px",
     maxHeight: "85vh",
     overflowY: "auto",
+    overflow: "visible" ,
     boxShadow: "0 15px 40px rgba(0,0,0,0.3)",
     border: "1px solid rgba(255,255,255,0.2)"
   },
