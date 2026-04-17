@@ -2,17 +2,23 @@ import { useEffect, useState } from "react";
 
 function History() {
   const [bookings, setBookings] = useState([]);
+ if (!localStorage.getItem("user")) {
+    return <h2>Please login to view history</h2>;
+  }
+ useEffect(() => {
+  const user = JSON.parse(localStorage.getItem("user"));
 
-  useEffect(() => {
-    const user = JSON.parse(localStorage.getItem("user"));
+  if (!user || !user.id) {
+    console.log("User not found");
+    return;
+  }
 
-    if (!user) return;
+  fetch(`${import.meta.env.VITE_API_URL}/api/bookings/user/${user.id}`)
+    .then(res => res.json())
+    .then(data => setBookings(data))
+    .catch(err => console.log(err));
 
-    fetch(`${import.meta.env.VITE_API_URL}/api/bookings/user/${user.id}`)
-      .then(res => res.json())
-      .then(data => setBookings(data))
-      .catch(err => console.log(err));
-  }, []);
+}, []);
 
   return (
     <div style={{ padding: "30px" }}>
