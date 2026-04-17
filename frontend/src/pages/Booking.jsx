@@ -5,8 +5,10 @@ import trainBg from "../assets/train-bg.jpg";
 function Booking() {
   const navigate = useNavigate();
 
-  const today = new Date().toISOString().split("T")[0];
-
+const today = new Date().toISOString().split("T")[0];
+const [stations, setStations] = useState([]);
+const [showFromDropdown, setShowFromDropdown] = useState(false);
+const [showToDropdown, setShowToDropdown] = useState(false);
   const [form, setForm] = useState({
   from: localStorage.getItem("from") || "",
   to: localStorage.getItem("to") || "",
@@ -17,6 +19,20 @@ function Booking() {
 
   const [error, setError] = useState("");
   const [passengerDetails, setPassengerDetails] = useState([]);
+  useEffect(() => {
+  fetch(`${import.meta.env.VITE_API_URL}/api/trains`)
+    .then(res => res.json())
+    .then(data => {
+      const uniqueStations = new Set();
+
+      data.forEach(train => {
+        uniqueStations.add(train.from);
+        uniqueStations.add(train.to);
+      });
+
+      setStations([...uniqueStations]);
+    });
+}, []);
 useEffect(() => {
   const name = localStorage.getItem("passengerName");
   const age = localStorage.getItem("passengerAge");
@@ -32,6 +48,24 @@ const count = Number(localStorage.getItem("passengers")) || 0;
     setPassengerDetails(details);
   }
 }, []);
+// 🔥 ADD THIS BELOW useEffect (filter logic)
+const filterStations = (input) => {
+  const value = input.toLowerCase();
+
+  return stations
+    .filter(s => s.toLowerCase().includes(value))
+    .sort((a, b) => {
+      const aStarts = a.toLowerCase().startsWith(value);
+      const bStarts = b.toLowerCase().startsWith(value);
+
+      if (aStarts && !bStarts) return -1;
+      if (!aStarts && bStarts) return 1;
+      return a.localeCompare(b);
+    });
+};
+
+const filteredFrom = filterStations(form.from).slice(0, 5);
+const filteredTo = filterStations(form.to).slice(0, 5);
   const handleChange = (e) => {
   const { name, value } = e.target;
 
@@ -106,27 +140,77 @@ const count = Number(localStorage.getItem("passengers")) || 0;
         <p style={styles.subtitle}>Plan your journey smartly</p>
 
         <div style={styles.grid2}>
-          <div style={styles.field}>
-            <label>From Station *</label>
-            <input 
-              style={styles.input}
-              name="from"
-              placeholder="Enter From Station"
-              value={form.from}
-              onChange={handleChange}
-            />
-          </div>
+         <div style={styles.field}>
+  <label>From Station *</label>
 
-          <div style={styles.field}>
-            <label>To Station *</label>
-            <input 
-              style={styles.input}
-              name="to"
-              placeholder="Enter To Station"
-              value={form.to}
-              onChange={handleChange}
-            />
+  <div style={{ position: "relative" }}>
+    <input 
+      style={styles.input}
+      name="from"
+      placeholder="Enter From Station"
+      value={form.from}
+      onChange={(e) => {
+        handleChange(e);
+        setShowFromDropdown(true);
+      }}
+      onBlur={() => setTimeout(() => setShowFromDropdown(false), 200)}
+    />
+
+    {showFromDropdown && filteredFrom.length > 0 && (
+      <div style={styles.dropdown}>
+        {filteredFrom.map((station, i) => (
+          <div
+            key={i}
+            style={styles.dropdownItem}
+            onClick={() => {
+              setForm({ ...form, from: station });
+              localStorage.setItem("from", station);
+              setShowFromDropdown(false);
+            }}
+          >
+            {station}
           </div>
+        ))}
+      </div>
+    )}
+  </div>
+</div>
+
+<div style={styles.field}>
+  <label>To Station *</label>
+
+  <div style={{ position: "relative" }}>
+    <input 
+      style={styles.input}
+      name="to"
+      placeholder="Enter To Station"
+      value={form.to}
+      onChange={(e) => {
+        handleChange(e);
+        setShowToDropdown(true);
+      }}
+      onBlur={() => setTimeout(() => setShowToDropdown(false), 200)}
+    />
+
+    {showToDropdown && filteredTo.length > 0 && (
+      <div style={styles.dropdown}>
+        {filteredTo.map((station, i) => (
+          <div
+            key={i}
+            style={styles.dropdownItem}
+            onClick={() => {
+              setForm({ ...form, to: station });
+              localStorage.setItem("to", station);
+              setShowToDropdown(false);
+            }}
+          >
+            {station}
+          </div>
+        ))}
+      </div>
+    )}
+  </div>
+</div>
         </div>
 
         <div style={styles.grid2}>
@@ -262,7 +346,24 @@ const styles = {
     position: "relative",
     fontFamily: "Segoe UI, sans-serif"
   },
+dropdown: {
+  position: "absolute",
+  top: "100%",
+  left: 0,
+  right: 0,
+  background: "white",
+  borderRadius: "8px",
+  maxHeight: "150px",
+  overflowY: "auto",
+  zIndex: 10,
+  color: "#000"
+},
 
+dropdownItem: {
+  padding: "10px",
+  cursor: "pointer",
+  borderBottom: "1px solid #eee"
+},
   backBtn: {
     position: "absolute",
     top: "20px",
