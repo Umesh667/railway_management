@@ -76,8 +76,10 @@ function Login() {
         const data = await response.json();
 
         if (response.ok) {
-          localStorage.setItem("loggedUser", data.user.username);
-          setSuccessMsg("✅ Logged in successfully!");
+localStorage.setItem("user", JSON.stringify({
+  id: data.user.id,
+  name: data.user.username
+}));          setSuccessMsg("✅ Logged in successfully!");
           setTimeout(() => navigate("/"), 1200);
         } else {
           setErrors({ login: data.message });

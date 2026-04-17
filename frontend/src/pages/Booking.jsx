@@ -310,12 +310,14 @@ const filteredTo = filterStations(form.to).slice(0, 5);
         <button 
           style={styles.submitBtn}
           onClick={() => {
-              const user = JSON.parse(localStorage.getItem("user"));
-               if (!user) {
-    alert("Please login first");
-    navigate("/login");
-    return;
-  } 
+             const userData = localStorage.getItem("user");
+const user = userData ? JSON.parse(userData) : null;
+
+if (!user || !user.id) {
+  alert("Please login first");
+  navigate("/login");
+  return;
+}
             if (!form.from || !form.to) {
               alert("Please enter From and To stations");
               return;

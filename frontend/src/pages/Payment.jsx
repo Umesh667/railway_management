@@ -5,7 +5,7 @@ import trainBg from "../assets/train-bg.jpg";
 function Payment() {
   const navigate = useNavigate();
   const location = useLocation();
-
+const user = JSON.parse(localStorage.getItem("user"));
   const { amount = 0, seats = [] } = location.state || {};
 
   const [paid, setPaid] = useState(false);
@@ -40,8 +40,13 @@ function Payment() {
   };
 
   const handlePaymentSuccess = async () => {
+    if (!user || !user.id) {
+  alert("Please login again");
+  navigate("/login");
+  return;
+}
   setLoading(true);
-
+     
   try {
     // 🔥 ADD THIS API CALL
     const res = await fetch(`${import.meta.env.VITE_API_URL}/api/bookings/add`, {
@@ -59,7 +64,7 @@ function Payment() {
         seats: JSON.parse(localStorage.getItem("lastSeats")).join(","),
         passenger_name: localStorage.getItem("passengerName"),
         passenger_age: localStorage.getItem("passengerAge"),
-        user_id: localStorage.getItem("user_id") // 🔥 MOST IMPORTANT
+        user_id: user.id 
       })
     });
 
