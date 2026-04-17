@@ -345,7 +345,6 @@ if (!user || !user.id) {
             localStorage.setItem("date", form.date);
             localStorage.setItem("class", form.travelClass);
             localStorage.setItem("passengers", Number(form.passengers));
-            localStorage.setItem("user_id", user.id); 
             navigate("/trainlist");
           }}
         >
