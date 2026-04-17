@@ -20,7 +20,7 @@ router.post("/add", (req, res) => {
     passenger_name,
     passenger_age
   } = req.body;
-
+const user_id = req.body.user_id;
   const generatePNR = () => {
     return Math.floor(1000000000 + Math.random() * 9000000000).toString();
   };
@@ -62,8 +62,8 @@ router.post("/add", (req, res) => {
 
     const sql = `
       INSERT INTO bookings 
-      (train_name, from_station, to_station, travel_date, \`class\`, passengers, seats, amount, passenger_name, passenger_age, pnr)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      (train_name, from_station, to_station, travel_date, \`class\`, passengers, seats, amount, passenger_name, passenger_age, pnr, user_id)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `;
 
     db.query(
@@ -79,7 +79,8 @@ router.post("/add", (req, res) => {
         finalAmount,
         passenger_name,
         passenger_age,
-        pnr
+        pnr,
+        user_id
       ],
       (err, result) => {
 
@@ -171,6 +172,20 @@ router.put("/cancel/:pnr", (req, res) => {
         seats
       });
     });
+  });
+});
+router.get("/user/:id", (req, res) => {
+  const userId = req.params.id;
+
+  const sql = "SELECT * FROM bookings WHERE user_id = ? ORDER BY id DESC";
+
+  db.query(sql, [userId], (err, result) => {
+    if (err) {
+      console.log(err);
+      return res.status(500).json({ message: "Database error" });
+    }
+
+    res.json(result);
   });
 });
 module.exports = router;
