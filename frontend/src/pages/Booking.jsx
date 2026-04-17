@@ -152,8 +152,13 @@ const filteredTo = filterStations(form.to).slice(0, 5);
       onChange={(e) => {
         handleChange(e);
         setShowFromDropdown(true);
+         setShowToDropdown(false);
+
       }}
-      onBlur={() => setTimeout(() => setShowFromDropdown(false), 200)}
+     onFocus={() => {
+  setShowFromDropdown(true);
+  setShowToDropdown(false);
+}}
     />
 
     {showFromDropdown && filteredFrom.length > 0 && (
@@ -192,8 +197,12 @@ const filteredTo = filterStations(form.to).slice(0, 5);
       onChange={(e) => {
         handleChange(e);
         setShowToDropdown(true);
+  setShowFromDropdown(false);
       }}
-      onBlur={() => setTimeout(() => setShowToDropdown(false), 200)}
+    onFocus={() => {
+  setShowToDropdown(true);
+  setShowFromDropdown(false);
+}}
     />
 
     {showToDropdown && filteredTo.length > 0 && (
@@ -210,6 +219,7 @@ const filteredTo = filterStations(form.to).slice(0, 5);
       });
 
       setShowToDropdown(false);
+
     }}
   >
     {station}
