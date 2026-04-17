@@ -13,7 +13,7 @@ import Services from "./pages/Services";
 import Contact from "./pages/Contact";
 import PNRStatus from "./pages/PNRStatus";
 import TrainSchedule from "./pages/TrainSchedule";
-import History from "./pages/History";
+import History from "./pages/HistoryPage";
 
 function App() {
   return (
@@ -33,7 +33,7 @@ function App() {
         <Route path="/contact" element={<Contact />} />
         <Route path="/pnr" element={<PNRStatus />} />
         <Route path="/schedule" element={<TrainSchedule />} />
-        <Route path="/history" element={<History />} />
+        <Route path="/history" element={<HistoryPage />} />
       </Routes>
     </BrowserRouter>
   );
