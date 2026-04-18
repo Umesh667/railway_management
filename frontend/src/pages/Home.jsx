@@ -176,10 +176,32 @@ function Home() {
         <h1 style={{ color: darkText ? "black" : "white" }}>
           Smart & Secure Railway Reservation System
         </h1>
-
+       
         <p style={{ color: darkText ? "black" : "white" }}>
           Book tickets, track PNR and manage your journey seamlessly
         </p>
+        <div style={styles.heroButtons}>
+  <button
+    style={styles.primaryBtn}
+    onClick={() => {
+  const user = localStorage.getItem("user");
+  if (user) navigate("/booking");
+  else {
+    alert("Please login first");
+    navigate("/login");
+  }
+}}
+  >
+    Book Ticket
+  </button>
+
+  <button
+    style={styles.secondaryBtn}
+    onClick={() => navigate("/pnr")}
+  >
+    Check PNR
+  </button>
+</div>
       </section>
 
       <div style={styles.searchBox}>
@@ -313,7 +335,13 @@ const styles = {
     fontSize: "26px",
     cursor: "pointer"
   },
-
+heroButtons: {
+  marginTop: "30px",   // increased spacing
+  display: "flex",
+  gap: "15px",
+  justifyContent: "center",
+  zIndex: 10           // 🔥 important (brings above search box)
+},
   dropdown: {
     position: "absolute",
     top: "100%",
@@ -382,17 +410,17 @@ const styles = {
   },
 
   searchBox: {
-    background: "white",
-    width: "85%",
-    margin: "-50px auto 40px",
-    padding: "25px",
-    borderRadius: "14px",
-    boxShadow: "0 12px 30px rgba(0,0,0,0.15)",
-    display: "flex",
-    gap: "12px",
-    flexWrap: "wrap",
-    justifyContent: "center"
-  },
+  background: "white",
+  width: "85%",
+  margin: "-20px auto 40px",   // 🔥 changed from -50px
+  padding: "25px",
+  borderRadius: "14px",
+  boxShadow: "0 12px 30px rgba(0,0,0,0.15)",
+  display: "flex",
+  gap: "12px",
+  flexWrap: "wrap",
+  justifyContent: "center"
+},
 
   input: {
     padding: "12px",
@@ -418,23 +446,25 @@ const styles = {
   },
 
   primaryBtn: {
-    background: "#0a2a66",
-    color: "white",
-    padding: "12px 22px",
-    border: "none",
-    borderRadius: "6px",
-    cursor: "pointer"
-  },
+  background: "#ffcc00",     // 🔥 changed color
+  color: "#0a2a66",
+  padding: "12px 22px",
+  border: "none",
+  borderRadius: "6px",
+  cursor: "pointer",
+  fontWeight: "600"
+},
 
-  secondaryBtn: {
-    background: "transparent",
-    color: "white",
-    border: "1px solid white",
-    padding: "12px 22px",
-    borderRadius: "6px",
-    marginLeft: "10px",
-    cursor: "pointer"
-  },
+secondaryBtn: {
+  background: "white",       // 🔥 changed from transparent
+  color: "#0a2a66",
+  border: "none",
+  padding: "12px 22px",
+  borderRadius: "6px",
+  marginLeft: "10px",
+  cursor: "pointer",
+  fontWeight: "600"
+},
 
   loginBtn: {
     padding: "6px 14px",
