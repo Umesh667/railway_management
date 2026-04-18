@@ -312,7 +312,11 @@ const filteredTo = filterStations(form.to).slice(0, 5);
           onClick={() => {
              const userData = localStorage.getItem("user");
 const user = userData ? JSON.parse(userData) : null;
-
+            if (!user || !user.id) {
+    alert("Please login first");
+    navigate("/login");
+    return;
+  }
             if (!form.from || !form.to) {
               alert("Please enter From and To stations");
               return;

@@ -8,12 +8,12 @@ function Home() {
   const [darkText, setDarkText] = useState(false); // ✅ NEW STATE
   const navigate = useNavigate();
 
-  // ✅ Load logged user
   useEffect(() => {
-    const user = localStorage.getItem("loggedUser");
-    if (user) {
-      setLoggedUser(user);
-    }
+   const userData = localStorage.getItem("user");
+if (userData) {
+  const user = JSON.parse(userData);
+  setLoggedUser(user.name);
+}
   }, []);
 
   // ✅ Background Animation
@@ -30,7 +30,7 @@ function Home() {
 
   // ✅ Logout
   const handleLogout = () => {
-    localStorage.removeItem("loggedUser");
+    localStorage.removeItem("user");
     setLoggedUser(null);
     navigate("/");
   };
@@ -103,14 +103,16 @@ function Home() {
           <MenuItem
             icon="🎫"
             text="Book Ticket"
-            onClick={() => {
-              if (loggedUser) {
-                navigate("/booking");
-              } else {
-                alert("Please login to book tickets");
-                navigate("/login");
-              }
-            }}
+           onClick={() => {
+  const user = localStorage.getItem("user");
+
+  if (user) {
+    navigate("/booking");
+  } else {
+    alert("Please login to book tickets");
+    navigate("/login");
+  }
+}}
           />
           <MenuItem
   icon="📄"
@@ -120,14 +122,16 @@ function Home() {
 <MenuItem
   icon="📜"
   text="Booking History"
-  onClick={() => {
-    if (loggedUser) {
-      navigate("/history");
-    } else {
-      alert("Please login to view history");
-      navigate("/login");
-    }
-  }}
+ onClick={() => {
+  const user = localStorage.getItem("user");
+
+  if (user) {
+    navigate("/history");
+  } else {
+    alert("Please login to view history");
+    navigate("/login");
+  }
+}}
 />
 <MenuItem
   icon="🚆"
@@ -169,13 +173,15 @@ function Home() {
           <button
             style={styles.primaryBtn}
             onClick={() => {
-              if (loggedUser) {
-                navigate("/booking");
-              } else {
-                alert("Please login to book tickets");
-                navigate("/login");
-              }
-            }}
+  const user = localStorage.getItem("user");
+
+  if (user) {
+    navigate("/booking");
+  } else {
+    alert("Please login to book tickets");
+    navigate("/login");
+  }
+}}
           >
             Book Ticket
           </button>
