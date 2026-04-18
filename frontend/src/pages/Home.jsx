@@ -5,21 +5,21 @@ import trainBg from "../assets/train-bg.jpg";
 function Home() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [stations, setStations] = useState([]);
-  const [fromInput, setFromInput] = useState("");
-  const [toInput, setToInput] = useState("");
+const [fromInput, setFromInput] = useState("");
+const [toInput, setToInput] = useState("");
 
-  const [showFromDropdown, setShowFromDropdown] = useState(false);
-  const [showToDropdown, setShowToDropdown] = useState(false);
+const [showFromDropdown, setShowFromDropdown] = useState(false);
+const [showToDropdown, setShowToDropdown] = useState(false);
   const [loggedUser, setLoggedUser] = useState(null);
   const [darkText, setDarkText] = useState(false); // ✅ NEW STATE
   const navigate = useNavigate();
 
   useEffect(() => {
-    const userData = localStorage.getItem("user");
-    if (userData) {
-      const user = JSON.parse(userData);
-      setLoggedUser(user.name);
-    }
+   const userData = localStorage.getItem("user");
+if (userData) {
+  const user = JSON.parse(userData);
+  setLoggedUser(user.name);
+}
   }, []);
 
   // ✅ Background Animation
@@ -33,32 +33,30 @@ function Home() {
     `;
     document.head.appendChild(style);
   }, []);
+useEffect(() => {
+  fetch(`${import.meta.env.VITE_API_URL}/api/trains`)
+    .then(res => res.json())
+    .then(data => {
+      const uniqueStations = new Set();
 
-  useEffect(() => {
-    fetch(`${import.meta.env.VITE_API_URL}/api/trains`)
-      .then(res => res.json())
-      .then(data => {
-        const uniqueStations = new Set();
-
-        data.forEach(train => {
-          uniqueStations.add(train.from);
-          uniqueStations.add(train.to);
-        });
-
-        setStations([...uniqueStations]);
+      data.forEach(train => {
+        uniqueStations.add(train.from);
+        uniqueStations.add(train.to);
       });
-  }, []);
 
-  const filterStations = (input) => {
-    const value = input.toLowerCase();
+      setStations([...uniqueStations]);
+    });
+}, []);
+const filterStations = (input) => {
+  const value = input.toLowerCase();
 
-    return stations
-      .filter(s => s.toLowerCase().includes(value))
-      .slice(0, 5);
-  };
+  return stations
+    .filter(s => s.toLowerCase().includes(value))
+    .slice(0, 5);
+};
 
-  const filteredFrom = filterStations(fromInput);
-  const filteredTo = filterStations(toInput);
+const filteredFrom = filterStations(fromInput);
+const filteredTo = filterStations(toInput);
 
   // ✅ Logout
   const handleLogout = () => {
@@ -80,6 +78,7 @@ function Home() {
           🚆 Railway Reservation
         </div>
 
+        {/* ✅ LOGIN / USER DISPLAY */}
         <div>
           {loggedUser ? (
             <>
@@ -96,6 +95,7 @@ function Home() {
             </>
           ) : (
             <>
+              {/* 🌙 CLICKABLE MOON */}
               <span
                 style={styles.moon}
                 onClick={() => setDarkText(!darkText)}
@@ -129,37 +129,54 @@ function Home() {
       </header>
 
       {menuOpen && (
-        <div style={styles.menudropdown}>
+        <div style={styles.dropdown}>
           <MenuItem
             icon="🎫"
             text="Book Ticket"
-            onClick={() => {
-              const user = localStorage.getItem("user");
+           onClick={() => {
+  const user = localStorage.getItem("user");
 
-              if (user) {
-                navigate("/booking");
-              } else {
-                alert("Please login to book tickets");
-                navigate("/login");
-              }
-            }}
+  if (user) {
+    navigate("/booking");
+  } else {
+    alert("Please login to book tickets");
+    navigate("/login");
+  }
+}}
           />
-          <MenuItem icon="📄" text="PNR Status" onClick={() => navigate("/pnr")} />
           <MenuItem
-            icon="📜"
-            text="Booking History"
-            onClick={() => {
-              const user = localStorage.getItem("user");
+  icon="📄"
+  text="PNR Status"
+  onClick={() => navigate("/pnr")}
+/>
+<MenuItem
+  icon="📜"
+  text="Booking History"
+ onClick={() => {
+  const user = localStorage.getItem("user");
 
-              if (user) {
-                navigate("/history");
-              } else {
-                alert("Please login to view history");
-                navigate("/login");
-              }
-            }}
+  if (user) {
+    navigate("/history");
+  } else {
+    alert("Please login to view history");
+    navigate("/login");
+  }
+}}
+/>
+<MenuItem
+  icon="🚆"
+  text="Train Schedule"
+  onClick={() => navigate("/schedule")}
+/>          <MenuItem
+            icon="🧾"
+            text="Services"
+            onClick={() => navigate("/services")}
           />
-          <MenuItem icon="🚆" text="Train Schedule" onClick={() => navigate("/schedule")} />
+          <MenuItem
+            icon="📞"
+            text="Contact"
+            onClick={() => navigate("/contact")}
+          />
         </div>
       )}
 
@@ -173,108 +190,113 @@ function Home() {
           animation: "moveBg 10s linear infinite alternate"
         }}
       >
+        {/* ✅ TEXT COLOR TOGGLE */}
         <h1 style={{ color: darkText ? "black" : "white" }}>
           Smart & Secure Railway Reservation System
         </h1>
-       
+
         <p style={{ color: darkText ? "black" : "white" }}>
           Book tickets, track PNR and manage your journey seamlessly
         </p>
-        <div style={styles.heroButtons}>
-  <button
-    style={styles.primaryBtn}
-    onClick={() => {
+
+        <div>
+          <button
+            style={styles.primaryBtn}
+            onClick={() => {
   const user = localStorage.getItem("user");
-  if (user) navigate("/booking");
-  else {
-    alert("Please login first");
+
+  if (user) {
+    navigate("/booking");
+  } else {
+    alert("Please login to book tickets");
     navigate("/login");
   }
 }}
-  >
-    Book Ticket
-  </button>
+          >
+            Book Ticket
+          </button>
 
-  <button
-    style={styles.secondaryBtn}
-    onClick={() => navigate("/pnr")}
-  >
-    Check PNR
-  </button>
-</div>
+          <button
+            style={styles.secondaryBtn}
+            onClick={() => navigate("/pnr")}
+          >
+            Check PNR
+          </button>
+        </div>
       </section>
 
       <div style={styles.searchBox}>
-
-        {/* FROM */}
         <div style={{ position: "relative" }}>
-          <input
-            style={styles.input}
-            placeholder="From Station"
-            value={fromInput}
-            onChange={(e) => {
-              setFromInput(e.target.value);
-              setShowFromDropdown(true);
-              setShowToDropdown(false);
-            }}
-            onFocus={() => setShowFromDropdown(true)}
-            onBlur={() => setTimeout(() => setShowFromDropdown(false), 200)}
-          />
+  <input
+    style={styles.input}
+    placeholder="From Station"
+    value={fromInput}
+    onChange={(e) => {
+      setFromInput(e.target.value);
+      setShowFromDropdown(true);
+      setShowToDropdown(false);
+    }}
+    onFocus={() => {
+      setShowFromDropdown(true);
+      setShowToDropdown(false);
+    }}
+  />
 
-          {showFromDropdown && filteredFrom.length > 0 && (
-            <div style={styles.dropdown}>
-              {filteredFrom.map((station, i) => (
-                <div
-                  key={i}
-                  style={styles.dropdownItem}
-                  onMouseDown={() => {
-                    setFromInput(station);
-                    setShowFromDropdown(false);
-                  }}
-                >
-                  {station}
-                </div>
-              ))}
-            </div>
-          )}
+  {showFromDropdown && filteredFrom.length > 0 && (
+    <div style={styles.dropdown}>
+      {filteredFrom.map((station, i) => (
+        <div
+          key={i}
+          style={styles.dropdownItem}
+          onMouseDown={() => {
+            setFromInput(station);
+            setShowFromDropdown(false);
+          }}
+        >
+          {station}
         </div>
+      ))}
+    </div>
+  )}
+</div>
 
-        {/* TO */}
         <div style={{ position: "relative" }}>
-          <input
-            style={styles.input}
-            placeholder="To Station"
-            value={toInput}
-            onChange={(e) => {
-              setToInput(e.target.value);
-              setShowToDropdown(true);
-              setShowFromDropdown(false);
-            }}
-            onFocus={() => setShowToDropdown(true)}
-            onBlur={() => setTimeout(() => setShowToDropdown(false), 200)}
-          />
+  <input
+    style={styles.input}
+    placeholder="To Station"
+    value={toInput}
+    onChange={(e) => {
+      setToInput(e.target.value);
+      setShowToDropdown(true);
+      setShowFromDropdown(false);
+    }}
+    onFocus={() => {
+      setShowToDropdown(true);
+      setShowFromDropdown(false);
+    }}
+  />
 
-          {/* ✅ FIXED */}
-          {showToDropdown && filteredTo.length > 0 && (
-            <div style={styles.dropdown}>
-              {filteredTo.map((station, i) => (
-                <div
-                  key={i}
-                  style={styles.dropdownItem}
-                  onMouseDown={() => {
-                    setToInput(station);
-                    setShowToDropdown(false);
-                  }}
-                >
-                  {station}
-                </div>
-              ))}
-            </div>
-          )}
+  {showToDropdown && filteredTo.length > 0 && (
+    <div style={styles.menudropdown}>
+      {filteredTo.map((station, i) => (
+        <div
+          key={i}
+          style={styles.dropdownItem}
+          onMouseDown={() => {
+            setToInput(station);
+            setShowToDropdown(false);
+          }}
+        >
+          {station}
         </div>
+      ))}
+    </div>
+  )}
+</div>
 
         <input style={styles.input} type="date" />
 
+        {/* ✅ FIXED SELECT */}
         <select style={styles.select}>
           <option>All Classes</option>
           <option>Sleeper</option>
@@ -286,11 +308,7 @@ function Home() {
 
         <button
           style={styles.primaryBtn}
-          onClick={() => {
-            localStorage.setItem("from", fromInput);
-            localStorage.setItem("to", toInput);
-            navigate("/trainlist");
-          }}
+          onClick={() => navigate("/trainlist")}
         >
           Search Trains
         </button>
@@ -335,32 +353,24 @@ const styles = {
     fontSize: "26px",
     cursor: "pointer"
   },
-heroButtons: {
-  marginTop: "30px",   // increased spacing
-  display: "flex",
-  gap: "15px",
-  justifyContent: "center",
-  zIndex: 10           // 🔥 important (brings above search box)
+dropdown: {
+  position: "absolute",
+  top: "100%",
+  left: 0,
+  right: 0,
+  background: "white",
+  borderRadius: "8px",
+  maxHeight: "150px",
+  overflowY: "auto",
+  zIndex: 999,
+  color: "#000"
 },
-  dropdown: {
-    position: "absolute",
-    top: "100%",
-    left: 0,
-    right: 0,
-    background: "white",
-    borderRadius: "8px",
-    maxHeight: "150px",
-    overflowY: "auto",
-    zIndex: 999,
-    color: "#000"
-  },
 
-  dropdownItem: {
-    padding: "10px",
-    cursor: "pointer",
-    borderBottom: "1px solid #eee"
-  },
-
+dropdownItem: {
+  padding: "10px",
+  cursor: "pointer",
+  borderBottom: "1px solid #eee"
+},
   logo: {
     fontSize: "22px",
     fontWeight: "600",
@@ -410,17 +420,17 @@ heroButtons: {
   },
 
   searchBox: {
-  background: "white",
-  width: "85%",
-  margin: "-20px auto 40px",   // 🔥 changed from -50px
-  padding: "25px",
-  borderRadius: "14px",
-  boxShadow: "0 12px 30px rgba(0,0,0,0.15)",
-  display: "flex",
-  gap: "12px",
-  flexWrap: "wrap",
-  justifyContent: "center"
-},
+    background: "white",
+    width: "85%",
+    margin: "-50px auto 40px",
+    padding: "25px",
+    borderRadius: "14px",
+    boxShadow: "0 12px 30px rgba(0,0,0,0.15)",
+    display: "flex",
+    gap: "12px",
+    flexWrap: "wrap",
+    justifyContent: "center"
+  },
 
   input: {
     padding: "12px",
@@ -446,25 +456,23 @@ heroButtons: {
   },
 
   primaryBtn: {
-  background: "#ffcc00",     // 🔥 changed color
-  color: "#0a2a66",
-  padding: "12px 22px",
-  border: "none",
-  borderRadius: "6px",
-  cursor: "pointer",
-  fontWeight: "600"
-},
+    background: "#0a2a66",
+    color: "white",
+    padding: "12px 22px",
+    border: "none",
+    borderRadius: "6px",
+    cursor: "pointer"
+  },
 
-secondaryBtn: {
-  background: "white",       // 🔥 changed from transparent
-  color: "#0a2a66",
-  border: "none",
-  padding: "12px 22px",
-  borderRadius: "6px",
-  marginLeft: "10px",
-  cursor: "pointer",
-  fontWeight: "600"
-},
+  secondaryBtn: {
+    background: "transparent",
+    color: "white",
+    border: "1px solid white",
+    padding: "12px 22px",
+    borderRadius: "6px",
+    marginLeft: "10px",
+    cursor: "pointer"
+  },
 
   loginBtn: {
     padding: "6px 14px",
