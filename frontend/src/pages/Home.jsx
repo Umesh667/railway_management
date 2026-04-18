@@ -129,7 +129,7 @@ const filteredTo = filterStations(toInput);
       </header>
 
       {menuOpen && (
-        <div style={styles.dropdown}>
+        <div style={styles.menudropdown}>
           <MenuItem
             icon="🎫"
             text="Book Ticket"
@@ -277,7 +277,7 @@ const filteredTo = filterStations(toInput);
   />
 
   {showToDropdown && filteredTo.length > 0 && (
-    <div style={styles.menudropdown}>
+    <div style={styles.dropdown}>
       {filteredTo.map((station, i) => (
         <div
           key={i}
