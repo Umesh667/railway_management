@@ -2,6 +2,7 @@ import { useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
 import trainBg from "../assets/train-bg.jpg";
+import jsPDF from "jspdf"; // ✅ ADDED
 
 function TicketSummary() {
   const navigate = useNavigate();
@@ -19,12 +20,9 @@ function TicketSummary() {
     seats: JSON.parse(localStorage.getItem("lastSeats") || "[]"),
     trainName: localStorage.getItem("trainName") || "Not Selected",
     amount: location.state?.amount || 0,
-
-    // ✅ ADDED PNR
     pnr: localStorage.getItem("pnr") || "Generating..."
   });
 
-  // ✅ Animations
   useEffect(() => {
     const style = document.createElement("style");
     style.innerHTML = `
@@ -68,12 +66,13 @@ function TicketSummary() {
 
         const data = await res.json();
 
-localStorage.setItem("pnr", data.pnr);
-localStorage.setItem("finalAmount", data.finalAmount);
-setSummary((prev) => ({
-  ...prev,
-  pnr: data.pnr
-}));
+        localStorage.setItem("pnr", data.pnr);
+        localStorage.setItem("finalAmount", data.finalAmount);
+
+        setSummary((prev) => ({
+          ...prev,
+          pnr: data.pnr
+        }));
       } catch (error) {
         console.log(error);
       }
@@ -82,39 +81,54 @@ setSummary((prev) => ({
     saveBooking();
   }, []);
 
-  // ✅ COPY FUNCTION
   const copyPNR = () => {
     navigator.clipboard.writeText(summary.pnr);
     alert("PNR copied: " + summary.pnr);
   };
 
+  // ✅ UPDATED PDF DOWNLOAD FUNCTION ONLY
   const downloadTicket = () => {
-    const ticketText = `
-🚆 RAILWAY E-TICKET
-----------------------------
-PNR: ${summary.pnr}
-Train: ${summary.trainName}
-From: ${summary.from}
-To: ${summary.to}
-Date: ${summary.date}
-Class: ${summary.travelClass}
-Passengers: ${summary.passengers}
-Seats Booked: ${summary.seats.join(", ")}
-Total Paid: ₹ ${summary.amount}
-Payment Status: SUCCESSFUL
-----------------------------
-Thank you for booking!
-    `;
+    const doc = new jsPDF();
 
-    const blob = new Blob([ticketText], { type: "text/plain" });
-    const url = URL.createObjectURL(blob);
+    doc.setFontSize(18);
+    doc.text("RAILWAY E-TICKET", 60, 15);
 
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "Railway_Ticket.txt";
-    a.click();
+    doc.line(10, 20, 200, 20);
 
-    URL.revokeObjectURL(url);
+    doc.setFontSize(12);
+
+    doc.text(`PNR: ${summary.pnr}`, 10, 30);
+    doc.text(`Train: ${summary.trainName}`, 10, 38);
+
+    doc.text(`From: ${summary.from}`, 10, 50);
+    doc.text(`To: ${summary.to}`, 10, 58);
+
+    doc.text(`Date: ${summary.date}`, 10, 70);
+    doc.text(`Class: ${summary.travelClass}`, 10, 78);
+
+    doc.line(10, 85, 200, 85);
+
+    doc.text("Passenger Details", 10, 95);
+    doc.text(`Name: ${summary.passengerName}`, 10, 105);
+    doc.text(`Age: ${summary.passengerAge}`, 10, 113);
+    doc.text(`Seats: ${summary.seats.join(", ")}`, 10, 121);
+
+    doc.line(10, 130, 200, 130);
+
+    doc.text(`Total Paid: ₹ ${summary.amount}`, 10, 140);
+    doc.text("Status: SUCCESSFUL", 10, 148);
+
+    doc.line(10, 160, 200, 160);
+
+    doc.setFontSize(10);
+    doc.text("Important Instructions:", 10, 170);
+    doc.text("• Carry valid ID proof during travel", 10, 178);
+    doc.text("• Reach station 30 mins before departure", 10, 186);
+    doc.text("• This is a digitally generated ticket", 10, 194);
+
+    doc.text("Customer Support: 1800-123-456", 10, 205);
+
+    doc.save("Railway_Ticket.pdf");
   };
 
   return (
@@ -132,7 +146,6 @@ Thank you for booking!
           ✅ Payment Successful
         </p>
 
-        {/* ✅ PNR DISPLAY */}
         <div style={styles.pnrBox}>
           🎫 <b>PNR:</b> {summary.pnr}
           <button style={styles.copyBtn} onClick={copyPNR}>
@@ -161,11 +174,7 @@ Thank you for booking!
           <hr />
 
           <p style={styles.amount}>💰 Total Paid: ₹ {summary.amount}</p>
-          {Number(summary.passengerAge) >= 60 && (
-  <p style={{ color: "green", fontWeight: "bold", marginTop: "8px" }}>
-    🎉 Senior Citizen Discount Applied (40%)
-  </p>
-)}
+
         </div>
 
         <button style={styles.downloadBtn} onClick={downloadTicket}>
