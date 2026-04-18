@@ -192,37 +192,35 @@ const filteredTo = filterStations(toInput);
       >
         {/* ✅ TEXT COLOR TOGGLE */}
         <h1 style={{ color: darkText ? "black" : "white" }}>
-          Smart & Secure Railway Reservation System
-        </h1>
+  Smart & Secure Railway Reservation System
+</h1>
 
-        <p style={{ color: darkText ? "black" : "white" }}>
-          Book tickets, track PNR and manage your journey seamlessly
-        </p>
+<p style={{ color: darkText ? "black" : "white" }}>
+  Book tickets, track PNR and manage your journey seamlessly
+</p>
 
-        <div>
-          <button
-            style={styles.primaryBtn}
-            onClick={() => {
-  const user = localStorage.getItem("user");
+<div style={styles.heroButtons}>
+  <button
+    style={styles.primaryBtn}
+    onClick={() => {
+      const user = localStorage.getItem("user");
+      if (user) navigate("/booking");
+      else {
+        alert("Please login to book tickets");
+        navigate("/login");
+      }
+    }}
+  >
+    Book Ticket
+  </button>
 
-  if (user) {
-    navigate("/booking");
-  } else {
-    alert("Please login to book tickets");
-    navigate("/login");
-  }
-}}
-          >
-            Book Ticket
-          </button>
-
-          <button
-            style={styles.secondaryBtn}
-            onClick={() => navigate("/pnr")}
-          >
-            Check PNR
-          </button>
-        </div>
+  <button
+    style={styles.secondaryBtn}
+    onClick={() => navigate("/pnr")}
+  >
+    Check PNR
+  </button>
+</div>
       </section>
 
       <div style={styles.searchBox}>
@@ -390,15 +388,16 @@ dropdownItem: {
     fontWeight: "600"
   },
 
-  menudropdown: {
-    background: "white",
-    width: "240px",
-    boxShadow: "0 8px 20px rgba(0,0,0,0.15)",
-    position: "absolute",
-    top: "65px",
-    left: "0",
-    zIndex: 999
-  },
+  // 🔥 CHANGE 4: MAKE MENU ALWAYS VISIBLE
+menudropdown: {
+  background: "white",
+  width: "240px",
+  boxShadow: "0 8px 20px rgba(0,0,0,0.15)",
+  position: "absolute",
+  top: "65px",
+  left: "0",
+  zIndex: 2000   // ✅ INCREASED
+},
 
   menuItem: {
     padding: "14px 20px",
@@ -409,29 +408,32 @@ dropdownItem: {
     fontWeight: "500"
   },
 
-  hero: {
-    height: "70vh",
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "center",
-    textAlign: "center",
-    padding: "20px"
-  },
+  // 🔥 CHANGE 5: ENSURE HERO ABOVE
+hero: {
+  height: "70vh",
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "center",
+  justifyContent: "center",
+  textAlign: "center",
+  padding: "20px",
+  position: "relative",
+  zIndex: 1   // ✅ ADDED
+},
 
-  searchBox: {
-    background: "white",
-    width: "85%",
-    margin: "-50px auto 40px",
-    padding: "25px",
-    borderRadius: "14px",
-    boxShadow: "0 12px 30px rgba(0,0,0,0.15)",
-    display: "flex",
-    gap: "12px",
-    flexWrap: "wrap",
-    justifyContent: "center"
-  },
-
+  // 🔥 CHANGE 3: REMOVE OVERLAP ISSUE
+searchBox: {
+  background: "white",
+  width: "85%",
+  margin: "20px auto 40px",   // ✅ FIXED (removed -50px)
+  padding: "25px",
+  borderRadius: "14px",
+  boxShadow: "0 12px 30px rgba(0,0,0,0.15)",
+  display: "flex",
+  gap: "12px",
+  flexWrap: "wrap",
+  justifyContent: "center"
+},
   input: {
     padding: "12px",
     borderRadius: "6px",
@@ -473,7 +475,13 @@ dropdownItem: {
     marginLeft: "10px",
     cursor: "pointer"
   },
-
+heroButtons: {
+  marginTop: "25px",
+  display: "flex",
+  gap: "15px",
+  justifyContent: "center",
+  zIndex: 10
+},
   loginBtn: {
     padding: "6px 14px",
     border: "1px solid white",
