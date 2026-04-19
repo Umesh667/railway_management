@@ -7,8 +7,8 @@ const router = express.Router();
 router.post("/register", async (req, res) => {
 
   const {
-    first,
-    last,
+    first_name,
+    last_name,
     age,
     gender,
     phone,
@@ -20,14 +20,13 @@ router.post("/register", async (req, res) => {
     pincode
   } = req.body;
 
-  if (!first || !last || !age || !gender || !phone || !username || !password) {
+  if (!first_name || !last_name || !age || !gender || !phone || !username || !password) {
     return res.status(400).json({ message: "Please fill all required fields" });
   }
 
   try {
-    const checkUserSql = "SELECT * FROM users WHERE username = ?";
-    
-    db.query(checkUserSql, [username], async (err, result) => {
+    const checkUserSql = "SELECT * FROM users WHERE username = ? OR phone = ?";
+db.query(checkUserSql, [username, phone], async (err, result) => {
 
       if (err) {
         console.log(err);
@@ -49,10 +48,15 @@ router.post("/register", async (req, res) => {
 
       db.query(
         insertSql,
-        [first, last, age, gender, phone, email, username, hashedPassword, city, state, pincode],
+        [first_name, last_name, age, gender, phone, email, username, hashedPassword, city, state, pincode],
         (err, result) => {
 
           if (err) {
+            if (err.code === "ER_DUP_ENTRY") {
+  return res.status(400).json({
+    message: "User already exists (phone or username)"
+  });
+}
             console.log(err);
             return res.status(500).json({ message: "Failed to register user" });
           }
