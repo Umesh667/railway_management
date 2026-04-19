@@ -34,8 +34,16 @@ db.query(checkUserSql, [username, phone], async (err, result) => {
       }
 
       if (result.length > 0) {
-        return res.status(400).json({ message: "Username already exists" });
-      }
+  const user = result[0];
+
+  if (user.username === username) {
+    return res.status(400).json({ message: "Username already exists" });
+  }
+
+  if (user.phone === phone) {
+    return res.status(400).json({ message: "Phone number already exists" });
+  }
+}
 
       // Hash password
       const hashedPassword = await bcrypt.hash(password, 10);
