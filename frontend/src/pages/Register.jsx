@@ -8,8 +8,8 @@ function Register() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const [form, setForm] = useState({
-    first: "",
-    last: "",
+    first_name: "",
+    last_name: "",
     age: "",
     gender: "",
     phone: "",
@@ -58,8 +58,8 @@ function Register() {
     setHasSubmitted(true);
     let newErrors = {};
 
-    if (!form.first) newErrors.first = "First name is required";
-    if (!form.last) newErrors.last = "Last name is required";
+    if (!form.first_name) newErrors.first_name = "First name is required";
+    if (!form.last_name) newErrors.last_name = "Last name is required";
     if (!form.age) newErrors.age = "Age is required";
     if (!form.gender) newErrors.gender = "Please select gender";
 
@@ -133,15 +133,15 @@ function Register() {
 
         <div style={styles.field}>
           <label>First Name *</label>
-          <input name="first" style={inputStyle("first")}
-            value={form.first} onChange={handleChange} />
-          {errors.first && <p style={styles.error}>{errors.first}</p>}
+          <input name="first_name" style={inputStyle("first_name")}
+            value={form.first_name} onChange={handleChange} />
+          {errors.first_name && <p style={styles.error}>{errors.first_name}</p>}
         </div>
 
         <div style={styles.field}>
           <label>Last Name *</label>
-          <input name="last" style={inputStyle("last")}
-            value={form.last} onChange={handleChange} />
+          <input name="last_name" style={inputStyle("last_name")}
+            value={form.last_name} onChange={handleChange} />
         </div>
 
         <div style={styles.field}>
