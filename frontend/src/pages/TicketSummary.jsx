@@ -2,8 +2,7 @@ import { useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
 import trainBg from "../assets/train-bg.jpg";
-import jsPDF from "jspdf"; // ✅ ADDED
-import html2canvas from "html2canvas";
+import jsPDF from "jspdf"; 
 
 function TicketSummary() {
   const navigate = useNavigate();
@@ -88,35 +87,78 @@ const ticketRef = useRef();
   };
 
   // ✅ UPDATED PDF DOWNLOAD FUNCTION ONLY
-  const downloadTicket = async () => {
-  const element = ticketRef.current;
+  const downloadTicket = () => {
+  const doc = new jsPDF();
 
-  const canvas = await html2canvas(element, {
-    scale: 2
-  });
+  // HEADER
+  doc.setFontSize(16);
+  doc.setTextColor(200, 0, 0);
+  doc.text("CURRENT BOOKING", 10, 10);
+  doc.text("CURRENT BOOKING", 140, 10);
 
-  const imgData = canvas.toDataURL("image/png");
+  doc.setTextColor(0, 0, 0);
+  doc.setFontSize(14);
+  doc.text("Electronic Reservation Slip (ERS)", 105, 18, { align: "center" });
 
-  const pdf = new jsPDF("p", "mm", "a4");
+  // FROM → TO BOX
+  doc.rect(10, 22, 190, 40);
 
-  const imgWidth = 190;
-  const pageHeight = 295;
-  const imgHeight = (canvas.height * imgWidth) / canvas.width;
+  doc.setFontSize(11);
+  doc.text("From", 15, 30);
+  doc.text("To", 150, 30);
+  doc.text("Boarding At", 80, 30);
 
-  let heightLeft = imgHeight;
-  let position = 10;
+  doc.setFontSize(12);
+  doc.text(summary.from, 15, 36);
+  doc.text("→", 100, 36);
+  doc.text(summary.to, 150, 36);
 
-  pdf.addImage(imgData, "PNG", 10, position, imgWidth, imgHeight);
-  heightLeft -= pageHeight;
+  doc.setFontSize(10);
+  doc.text(`Date: ${summary.date}`, 15, 45);
+  doc.text(`Class: ${summary.travelClass}`, 150, 45);
 
-  while (heightLeft > 0) {
-    position = heightLeft - imgHeight;
-    pdf.addPage();
-    pdf.addImage(imgData, "PNG", 10, position, imgWidth, imgHeight);
-    heightLeft -= pageHeight;
-  }
+  // PNR + TRAIN BOX
+  doc.rect(10, 65, 190, 20);
 
-  pdf.save("Railway_Ticket.pdf");
+  doc.setFontSize(11);
+  doc.text(`PNR: ${summary.pnr}`, 15, 75);
+  doc.text(`Train: ${summary.trainName}`, 100, 75);
+
+  // PASSENGER TABLE (ONLY ONCE ✅)
+  doc.text("Passenger Details", 10, 95);
+
+  doc.rect(10, 100, 190, 30);
+
+  // HEADER
+  doc.setFontSize(10);
+  doc.text("Name", 15, 108);
+  doc.text("Age", 60, 108);
+  doc.text("Gender", 90, 108);
+  doc.text("Seat", 120, 108);
+  doc.text("Status", 160, 108);
+
+  doc.line(10, 110, 200, 110);
+
+  // DATA
+  doc.text(summary.passengerName, 15, 118);
+  doc.text(summary.passengerAge.toString(), 60, 118);
+  doc.text("M", 90, 118); // change if needed
+  doc.text(summary.seats.join(", "), 120, 118);
+  doc.text("CONFIRMED", 160, 118);
+
+  // PAYMENT
+  doc.text("Payment Details", 10, 140);
+
+  doc.rect(10, 145, 190, 20);
+
+  doc.text(`Total Fare: ₹ ${summary.amount}`, 15, 155);
+
+  // FOOTER
+  doc.setFontSize(9);
+  doc.text("Carry valid ID proof during travel.", 10, 175);
+  doc.text("This is a computer generated ticket.", 10, 182);
+
+  doc.save("Railway_Ticket.pdf");
 };
   return (
     <div style={styles.page}>
@@ -127,6 +169,11 @@ const ticketRef = useRef();
 
     <div ref={ticketRef} style={styles.card}>
 
+     <h3 style={{ textAlign: "center", color: "#0a2a66" }}>
+    RAILWAY E-TICKET
+  </h3>
+  <hr />
+  
         <h2 style={styles.title}>🎟 Ticket Summary</h2>
 
         <p style={styles.success}>
