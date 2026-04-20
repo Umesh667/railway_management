@@ -15,7 +15,6 @@ const getDayFromDate = (date) => {
 };
 
 const selectedDay = getDayFromDate(date);
-  // ✅ GET AGE FROM LOCAL STORAGE
   const age = Number(localStorage.getItem("passengerAge"));
 
   useEffect(() => {
@@ -59,9 +58,6 @@ const selectedDay = getDayFromDate(date);
 
       <div style={styles.card}>
         <h2 style={styles.title}>Available Trains</h2>
-        <h2 style={styles.title}>Available Trains</h2>
-
-{/* ✅ ADD HERE */}
 {trains.length === 0 && (
   <p style={{ color: "white", textAlign: "center", marginTop: "10px" }}>
     ❌ No trains available for selected date
@@ -73,7 +69,6 @@ const selectedDay = getDayFromDate(date);
 
         {trains.map((train) => {
 
-          // ✅ NEW: CLASS BASED PRICING
 const selectedClass = localStorage.getItem("class")?.toUpperCase();
 let basePrice = 0;
 
@@ -83,7 +78,6 @@ else if (selectedClass === "2-AC") basePrice = Number(train.ac2_price) || 0;
 else if (selectedClass === "1-AC") basePrice = Number(train.ac1_price) || 0;
 else if (selectedClass === "GENERAL") basePrice = Number(train.general_price) || 0;
 else if (selectedClass === "CHAIR CAR") basePrice = Number(train.chair_price) || 0;
-          // ✅ APPLY DISCOUNT
           const finalPrice =
             age >= 60 ? Math.floor(basePrice * 0.6) : basePrice;
 console.log("CLASS:", selectedClass);
@@ -104,7 +98,6 @@ console.log("PRICE:", basePrice);
                 <p>⏱ Duration: {train.duration} hrs</p>
               </div>
 
-              {/* MIDDLE */}
               <div style={styles.middle}>
                 <p>🟢 Departure: {train.departure_time}</p>
                 <p>🔴 Arrival: {train.arrival_time}</p>
@@ -114,13 +107,10 @@ console.log("PRICE:", basePrice);
                 <p style={styles.available}>🟢 Seats Available</p>
               </div>
 
-              {/* RIGHT */}
               <div style={styles.right}>
 
-                {/* ✅ SHOW FINAL PRICE */}
                 <h2 style={styles.price}>₹ {finalPrice}</h2>
 
-                {/* ✅ SHOW DISCOUNT MESSAGE */}
                 {age >= 60 && (
                   <p style={{ color: "#00e676", fontSize: "12px" }}>
                     🎉 Senior Discount Applied
