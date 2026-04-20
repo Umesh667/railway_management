@@ -57,17 +57,20 @@ const selectedDay = getDayFromDate(date);
       </button>
 
       <div style={styles.card}>
-        <h2 style={styles.title}>Available Trains</h2>
-{trains.length === 0 && (
-  <p style={{ color: "white", textAlign: "center", marginTop: "10px" }}>
+        {trains.length > 0 ? (
+  <>
+    <h2 style={styles.title}>Available Trains</h2>
+    <p style={styles.subtitle}>
+      Select a train to continue seat booking
+    </p>
+  </>
+) : (
+  <h2 style={{ color: "white", textAlign: "center" }}>
     ❌ No trains available for selected date
-  </p>
+  </h2>
 )}
-        <p style={styles.subtitle}>
-          Select a train to continue seat booking
-        </p>
 
-        {trains.map((train) => {
+      {trains.length > 0 && trains.map((train) => {
 
 const selectedClass = localStorage.getItem("class")?.toUpperCase();
 let basePrice = 0;
