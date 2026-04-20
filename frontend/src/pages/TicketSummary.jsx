@@ -3,12 +3,13 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
 import trainBg from "../assets/train-bg.jpg";
 import jsPDF from "jspdf"; // ✅ ADDED
+import html2canvas from "html2canvas";
 
 function TicketSummary() {
   const navigate = useNavigate();
   const location = useLocation();
   const hasSaved = useRef(false);
-
+const ticketRef = useRef();
   const [summary, setSummary] = useState({
     passengerName: localStorage.getItem("passengerName") || "Not Provided",
     passengerAge: localStorage.getItem("passengerAge") || "Not Provided",
@@ -87,50 +88,36 @@ function TicketSummary() {
   };
 
   // ✅ UPDATED PDF DOWNLOAD FUNCTION ONLY
-  const downloadTicket = () => {
-    const doc = new jsPDF();
+  const downloadTicket = async () => {
+  const element = ticketRef.current;
 
-    doc.setFontSize(18);
-    doc.text("RAILWAY E-TICKET", 60, 15);
+  const canvas = await html2canvas(element, {
+    scale: 2
+  });
 
-    doc.line(10, 20, 200, 20);
+  const imgData = canvas.toDataURL("image/png");
 
-    doc.setFontSize(12);
+  const pdf = new jsPDF("p", "mm", "a4");
 
-    doc.text(`PNR: ${summary.pnr}`, 10, 30);
-    doc.text(`Train: ${summary.trainName}`, 10, 38);
+  const imgWidth = 190;
+  const pageHeight = 295;
+  const imgHeight = (canvas.height * imgWidth) / canvas.width;
 
-    doc.text(`From: ${summary.from}`, 10, 50);
-    doc.text(`To: ${summary.to}`, 10, 58);
+  let heightLeft = imgHeight;
+  let position = 10;
 
-    doc.text(`Date: ${summary.date}`, 10, 70);
-    doc.text(`Class: ${summary.travelClass}`, 10, 78);
+  pdf.addImage(imgData, "PNG", 10, position, imgWidth, imgHeight);
+  heightLeft -= pageHeight;
 
-    doc.line(10, 85, 200, 85);
+  while (heightLeft > 0) {
+    position = heightLeft - imgHeight;
+    pdf.addPage();
+    pdf.addImage(imgData, "PNG", 10, position, imgWidth, imgHeight);
+    heightLeft -= pageHeight;
+  }
 
-    doc.text("Passenger Details", 10, 95);
-    doc.text(`Name: ${summary.passengerName}`, 10, 105);
-    doc.text(`Age: ${summary.passengerAge}`, 10, 113);
-    doc.text(`Seats: ${summary.seats.join(", ")}`, 10, 121);
-
-    doc.line(10, 130, 200, 130);
-
-    doc.text(`Total Paid: ₹ ${summary.amount}`, 10, 140);
-    doc.text("Status: SUCCESSFUL", 10, 148);
-
-    doc.line(10, 160, 200, 160);
-
-    doc.setFontSize(10);
-    doc.text("Important Instructions:", 10, 170);
-    doc.text("• Carry valid ID proof during travel", 10, 178);
-    doc.text("• Reach station 30 mins before departure", 10, 186);
-    doc.text("• This is a digitally generated ticket", 10, 194);
-
-    doc.text("Customer Support: 1800-123-456", 10, 205);
-
-    doc.save("Railway_Ticket.pdf");
-  };
-
+  pdf.save("Railway_Ticket.pdf");
+};
   return (
     <div style={styles.page}>
 
@@ -138,7 +125,7 @@ function TicketSummary() {
         🏠 Back to Home
       </button>
 
-      <div style={styles.card}>
+    <div ref={ticketRef} style={styles.card}>
 
         <h2 style={styles.title}>🎟 Ticket Summary</h2>
 
