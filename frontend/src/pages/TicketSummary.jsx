@@ -86,77 +86,98 @@ const ticketRef = useRef();
     alert("PNR copied: " + summary.pnr);
   };
 
-  // ✅ UPDATED PDF DOWNLOAD FUNCTION ONLY
   const downloadTicket = () => {
   const doc = new jsPDF();
 
-  // HEADER
-  doc.setFontSize(16);
-  doc.setTextColor(200, 0, 0);
-  doc.text("CURRENT BOOKING", 10, 10);
-  doc.text("CURRENT BOOKING", 140, 10);
+  const left = 15;
+  const right = 195;
+  const center = 105;
 
-  doc.setTextColor(0, 0, 0);
+  doc.setFillColor(10, 42, 102);
+  doc.rect(0, 0, 210, 20, "F");
+
+  doc.setTextColor(255, 255, 255);
   doc.setFontSize(14);
-  doc.text("Electronic Reservation Slip (ERS)", 105, 18, { align: "center" });
+  doc.text("RAILWAY E-TICKET", center, 12, { align: "center" });
 
-  // FROM → TO BOX
-  doc.rect(10, 22, 190, 40);
-
-  doc.setFontSize(11);
-  doc.text("From", 15, 30);
-  doc.text("To", 150, 30);
-  doc.text("Boarding At", 80, 30);
-
+  doc.setTextColor(0);
   doc.setFontSize(12);
-  doc.text(summary.from, 15, 36);
-  doc.text("→", 100, 36);
-  doc.text(summary.to, 150, 36);
+  doc.text("Electronic Reservation Slip (ERS)", center, 28, { align: "center" });
 
+  doc.setFillColor(245, 248, 255);
+  doc.rect(10, 35, 190, 35, "F");
+
+  
+  doc.setFontSize(9);
+  doc.setTextColor(120);
+  doc.text("FROM", left, 42);
+  doc.text("BOARDING", center, 42, { align: "center" });
+  doc.text("TO", right, 42, { align: "right" });
+
+  
+  doc.setFontSize(12);
+  doc.setTextColor(0);
+  doc.text(summary.from, left, 50);
+  doc.text("→", center, 50, { align: "center" });
+  doc.text(summary.to, right, 50, { align: "right" });
+
+  
   doc.setFontSize(10);
-  doc.text(`Date: ${summary.date}`, 15, 45);
-  doc.text(`Class: ${summary.travelClass}`, 150, 45);
-
-  // PNR + TRAIN BOX
-  doc.rect(10, 65, 190, 20);
+  doc.text(`Date: ${summary.date}`, left, 60);
+  doc.text(`Class: ${summary.travelClass}`, right, 60, { align: "right" });
+  
+  doc.setFillColor(230, 255, 240);
+  doc.rect(10, 75, 190, 20, "F");
 
   doc.setFontSize(11);
-  doc.text(`PNR: ${summary.pnr}`, 15, 75);
-  doc.text(`Train: ${summary.trainName}`, 100, 75);
+  doc.text(`PNR: ${summary.pnr}`, left, 87);
+  doc.text(`Train: ${summary.trainName}`, right, 87, { align: "right" });
 
-  // PASSENGER TABLE (ONLY ONCE ✅)
-  doc.text("Passenger Details", 10, 95);
+  
+  doc.setFontSize(12);
+  doc.text("Passenger Details", left, 105);
 
-  doc.rect(10, 100, 190, 30);
+  doc.rect(10, 110, 190, 30);
 
-  // HEADER
+  
   doc.setFontSize(10);
-  doc.text("Name", 15, 108);
-  doc.text("Age", 60, 108);
-  doc.text("Gender", 90, 108);
-  doc.text("Seat", 120, 108);
-  doc.text("Status", 160, 108);
+  doc.setTextColor(120);
 
-  doc.line(10, 110, 200, 110);
+  doc.text("Name", 15, 118);
+  doc.text("Age", 60, 118);
+  doc.text("Gender", 90, 118);
+  doc.text("Seat", 120, 118);
+  doc.text("Status", 160, 118);
 
-  // DATA
-  doc.text(summary.passengerName, 15, 118);
-  doc.text(summary.passengerAge.toString(), 60, 118);
-  doc.text("M", 90, 118); // change if needed
-  doc.text(summary.seats.join(", "), 120, 118);
-  doc.text("CONFIRMED", 160, 118);
+  doc.line(10, 120, 200, 120);
 
-  // PAYMENT
-  doc.text("Payment Details", 10, 140);
+  
+  doc.setTextColor(0);
+  doc.text(summary.passengerName, 15, 130);
+  doc.text(summary.passengerAge.toString(), 60, 130);
+  doc.text("M", 90, 130);
+  doc.text(summary.seats.join(", "), 120, 130);
 
-  doc.rect(10, 145, 190, 20);
+  doc.setTextColor(0, 150, 0);
+  doc.text("CONFIRMED", 160, 130);
 
-  doc.text(`Total Fare: ₹ ${summary.amount}`, 15, 155);
+  
+  doc.setFillColor(255, 245, 230);
+  doc.rect(10, 150, 190, 20, "F");
 
-  // FOOTER
+  doc.setTextColor(0);
+  doc.setFontSize(11);
+  doc.text("Total Fare", left, 162);
+
+  doc.setTextColor(200, 0, 0);
+  doc.setFontSize(13);
+  doc.text(`₹ ${summary.amount}`, right, 162, { align: "right" });
+
+  
+  doc.setTextColor(120);
   doc.setFontSize(9);
-  doc.text("Carry valid ID proof during travel.", 10, 175);
-  doc.text("This is a computer generated ticket.", 10, 182);
+  doc.text("Carry valid ID proof during travel.", left, 180);
+  doc.text("This is a computer generated ticket.", left, 186);
 
   doc.save("Railway_Ticket.pdf");
 };
@@ -214,7 +235,7 @@ const ticketRef = useRef();
         <button style={styles.downloadBtn} onClick={downloadTicket}>
           ⬇ Download Ticket
         </button>
-
+        
       </div>
     </div>
   );
